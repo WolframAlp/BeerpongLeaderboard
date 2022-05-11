@@ -1,8 +1,8 @@
 import 'package:beerpong_leaderboard/screens/authenticate/authenticate.dart';
-import 'package:beerpong_leaderboard/screens/home/home.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:beerpong_leaderboard/screens/page_wrapper.dart';
 
 class Wrapper extends StatelessWidget {
   const Wrapper({ Key? key }) : super(key: key);
@@ -16,7 +16,7 @@ class Wrapper extends StatelessWidget {
     if (user == null){
       return Authenticate();
     } else {
-      return Home();
+      return PageWrapper();
     }
 
   }

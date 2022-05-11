@@ -7,6 +7,6 @@ class UserModel {
   final int elo;
   final List friends;
 
-  UserModel({ this.uid = '', this.wins = 0, this.games = 0, this.name = '', this.elo = 1000, this.friends = const []});
+  UserModel({required this.uid, required this.wins, required this.games, required this.name, required this.elo, required this.friends});
 
 }
