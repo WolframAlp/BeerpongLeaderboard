@@ -13,7 +13,6 @@ void main() async {
     MultiProvider(
     providers: [
       ChangeNotifierProvider(create: (context) => PageManger()),
-      ChangeNotifierProvider(create: (context) => AuthService())
     ],
     child: const MyApp()
     ),

@@ -15,7 +15,6 @@ import 'package:flutter/services.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class Intro extends StatefulWidget {
-
   User? user;
   Intro({Key? key, required this.user}) : super(key: key);
 
@@ -98,15 +97,15 @@ class _IntroState extends State<Intro> {
                 });
               } else {
                 error = '';
+                await user?.updateDisplayName(username);
+                await DatabaseService(uid: user?.uid, name: username)
+                    .createNewUser();
+                // setState(() {
+                loading = false;
+                // });
+                await user?.reload();
+                context.read<PageManger>().goToHome();
               }
-              await user?.updateDisplayName(username);
-              await DatabaseService(uid: user?.uid, name: username)
-                  .createNewUser();
-              // setState(() {
-              loading = false;
-              // });
-              await user?.reload();
-              context.read<PageManger>().goToHome();
             } else {
               error = '';
             }
@@ -187,72 +186,74 @@ class _IntroState extends State<Intro> {
   @override
   Widget build(BuildContext context) {
     User? user = Provider.of<User?>(context);
-    return loading ? LoadingIcon() : Scaffold(
-      appBar: _buildAppBar(),
-      body: AnnotatedRegion<SystemUiOverlayStyle>(
-        value: SystemUiOverlayStyle.light,
-        child: GestureDetector(
-          onTap: (() => FocusScope.of(context).unfocus()),
-          child: Stack(
-            children: <Widget>[
-              Container(
-                height: double.infinity,
-                width: double.infinity,
-                decoration: const BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    colors: [
-                      Color(0xFF73AEF5),
-                      Color(0xFF61A4F1),
-                      Color(0xFF478DE0),
-                      Color(0xFF398AE5),
-                    ],
-                    stops: [0.1, 0.4, 0.7, 0.9],
-                  ),
+    return loading
+        ? LoadingIcon()
+        : Scaffold(
+            appBar: _buildAppBar(),
+            body: AnnotatedRegion<SystemUiOverlayStyle>(
+              value: SystemUiOverlayStyle.light,
+              child: GestureDetector(
+                onTap: (() => FocusScope.of(context).unfocus()),
+                child: Stack(
+                  children: <Widget>[
+                    Container(
+                      height: double.infinity,
+                      width: double.infinity,
+                      decoration: const BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
+                          colors: [
+                            Color(0xFF73AEF5),
+                            Color(0xFF61A4F1),
+                            Color(0xFF478DE0),
+                            Color(0xFF398AE5),
+                          ],
+                          stops: [0.1, 0.4, 0.7, 0.9],
+                        ),
+                      ),
+                    ),
+                    SizedBox(
+                      height: double.infinity,
+                      child: SingleChildScrollView(
+                        physics: const AlwaysScrollableScrollPhysics(),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 40.0,
+                          vertical: 120.0,
+                        ),
+                        child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: <Widget>[
+                              const Text(
+                                "Input Username",
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontFamily: 'OpenSans',
+                                  fontSize: 30.0,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              const SizedBox(
+                                height: 30.0,
+                              ),
+                              Form(
+                                key: _userFormKey,
+                                child: Column(
+                                  children: [
+                                    _buildUsernameTF(),
+                                    const SizedBox(height: 30.0),
+                                  ],
+                                ),
+                              ),
+                              _buildSetUsernameBtn(user),
+                              _buildErrorMessage(),
+                            ]),
+                      ),
+                    ),
+                  ],
                 ),
               ),
-              SizedBox(
-                height: double.infinity,
-                child: SingleChildScrollView(
-                  physics: const AlwaysScrollableScrollPhysics(),
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 40.0,
-                    vertical: 120.0,
-                  ),
-                  child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        const Text(
-                          "Input Username",
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontFamily: 'OpenSans',
-                            fontSize: 30.0,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        const SizedBox(
-                          height: 30.0,
-                        ),
-                        Form(
-                          key: _userFormKey,
-                          child: Column(
-                            children: [
-                              _buildUsernameTF(),
-                              const SizedBox(height: 30.0),
-                            ],
-                          ),
-                        ),
-                        _buildSetUsernameBtn(user),
-                        _buildErrorMessage(),
-                      ]),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
+            ),
+          );
   }
 }
