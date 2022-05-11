@@ -1,12 +1,15 @@
-import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-
 // create it using an item list so you can scroll horizontally
 // probably google to get the tiny dots at the buttom
-// 
+//
 
 // TODO make list of just usernames to check against
 
+import 'package:flutter/material.dart';
+import 'package:beerpong_leaderboard/utilities/constants.dart';
+import 'package:beerpong_leaderboard/services/page_manager.dart';
+import 'package:provider/provider.dart';
+import 'package:flutter/services.dart';
+import 'package:beerpong_leaderboard/utilities/constants.dart';
 
 class Intro extends StatefulWidget {
   Intro({Key? key}) : super(key: key);
@@ -16,8 +19,189 @@ class Intro extends StatefulWidget {
 }
 
 class _IntroState extends State<Intro> {
+  String username = '';
+  String error = '';
+  final _userFormKey = GlobalKey<FormState>();
+
+  AppBar _buildAppBar() {
+    return AppBar(
+      backgroundColor: Colors.blue[300],
+      title: const Text(
+        "NAME OF USER",
+        style: kHintTextStyle,
+        textAlign: TextAlign.center,
+      ),
+      elevation: 0.0,
+      actions: <Widget>[
+        TextButton.icon(
+            onPressed: context.read<PageManger>().goToHome,
+            icon: const Icon(Icons.home),
+            label: const Text("Home")),
+        TextButton.icon(
+          onPressed: () {},
+          icon: const Icon(Icons.settings),
+          label: const Text("Settings"),
+        ),
+      ],
+    );
+  }
+
+  String? _validateUsername(String? username) {
+    if (username == null) {
+      return "Please input username";
+    }
+    if (username.length < 6) {
+      return "Username too short (min 6 char)";
+    } else if (username.contains('@') ||
+        username.contains('%') ||
+        username.contains('?')) {
+      return "Characters @, %, ? are not allowed";
+    } else {
+      return null;
+    }
+  }
+
+  Widget _buildSetUsernameBtn() {
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 25.0),
+      width: double.infinity,
+      child: Padding(
+        padding: const EdgeInsets.all(10.0),
+        child: ElevatedButton(
+          // elevation: 5.0,
+          onPressed: () async {
+            if (_userFormKey.currentState!.validate()) {
+              print("username checked");
+            } else {
+              error = '';
+            }
+          },
+          style: ButtonStyle(
+            shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(25.0)),
+            ),
+            backgroundColor: MaterialStateProperty.all<Color>(Colors.white),
+          ),
+          child: const Text(
+            'Set Username',
+            style: TextStyle(
+              color: Color(0xFF527DAA),
+              letterSpacing: 1.5,
+              fontSize: 18.0,
+              fontWeight: FontWeight.bold,
+              fontFamily: 'OpenSans',
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildUsernameTF() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        const Text(
+          'Username',
+          style: kLabelStyle,
+        ),
+        const SizedBox(height: 10.0),
+        Container(
+          alignment: Alignment.centerLeft,
+          decoration: kBoxDecorationStyle,
+          height: 60.0,
+          child: TextFormField(
+            validator: _validateUsername,
+            onChanged: (val) {
+              setState(() => username = val);
+            },
+            style: const TextStyle(
+              color: Colors.white,
+              fontFamily: 'OpenSans',
+            ),
+            decoration: const InputDecoration(
+              border: InputBorder.none,
+              contentPadding: EdgeInsets.only(top: 14.0),
+              prefixIcon: Icon(
+                Icons.supervised_user_circle,
+                color: Colors.white,
+              ),
+              hintText: 'Username',
+              hintStyle: kHintTextStyle,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Container();
+    return Scaffold(
+      appBar: _buildAppBar(),
+      body: AnnotatedRegion<SystemUiOverlayStyle>(
+        value: SystemUiOverlayStyle.light,
+        child: GestureDetector(
+          onTap: (() => FocusScope.of(context).unfocus()),
+          child: Stack(
+            children: <Widget>[
+              Container(
+                height: double.infinity,
+                width: double.infinity,
+                decoration: const BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [
+                      Color(0xFF73AEF5),
+                      Color(0xFF61A4F1),
+                      Color(0xFF478DE0),
+                      Color(0xFF398AE5),
+                    ],
+                    stops: [0.1, 0.4, 0.7, 0.9],
+                  ),
+                ),
+              ),
+              SizedBox(
+                height: double.infinity,
+                child: SingleChildScrollView(
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 40.0,
+                    vertical: 120.0,
+                  ),
+                  child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        const Text(
+                          "Input Username",
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontFamily: 'OpenSans',
+                            fontSize: 30.0,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const SizedBox(
+                          height: 30.0,
+                        ),
+                        Form(
+                          key: _userFormKey,
+                          child: Column(
+                            children: [
+                              _buildUsernameTF(),
+                              const SizedBox(height: 30.0),
+                            ],
+                          ),
+                        ),
+                        _buildSetUsernameBtn(),
+                      ]),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 }

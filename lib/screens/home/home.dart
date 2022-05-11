@@ -31,6 +31,11 @@ class Home extends StatelessWidget {
               label: const Text("Profile"),
             ),
             TextButton.icon(
+              onPressed: context.read<PageManger>().goToIntro,
+              icon: const Icon(Icons.verified_user),
+              label: const Text("Intro"),
+            ),
+            TextButton.icon(
                 onPressed: () async {
                   await _auth.signOut();
                 },
