@@ -13,16 +13,17 @@ import 'package:beerpong_leaderboard/utilities/loading.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/services.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:beerpong_leaderboard/screens/intro/intro_wrapper.dart';
 
-class Intro extends StatefulWidget {
+class SetUsername extends StatefulWidget {
   User? user;
-  Intro({Key? key, required this.user}) : super(key: key);
+  SetUsername({Key? key, required this.user}) : super(key: key);
 
   @override
-  State<Intro> createState() => _IntroState();
+  State<SetUsername> createState() => _SetUsernameState();
 }
 
-class _IntroState extends State<Intro> {
+class _SetUsernameState extends State<SetUsername> {
   String username = '';
   String error = '';
   bool loading = false;
@@ -32,18 +33,18 @@ class _IntroState extends State<Intro> {
     return AppBar(
       backgroundColor: Colors.blue[300],
       title: const Text(
-        "NAME OF USER",
+        "WAZZAAARP",
         style: kHintTextStyle,
         textAlign: TextAlign.center,
       ),
       elevation: 0.0,
       actions: <Widget>[
         TextButton.icon(
-            onPressed: context.read<PageManger>().goToHome,
+            onPressed: context.read<PageManager>().goToHome,
             icon: const Icon(Icons.home),
             label: const Text("Home")),
         TextButton.icon(
-          onPressed: () {},
+          onPressed: context.read<PageManager>().goToIntro,
           icon: const Icon(Icons.settings),
           label: const Text("Settings"),
         ),
@@ -100,11 +101,9 @@ class _IntroState extends State<Intro> {
                 await user?.updateDisplayName(username);
                 await DatabaseService(uid: user?.uid, name: username)
                     .createNewUser();
-                // setState(() {
                 loading = false;
-                // });
                 await user?.reload();
-                context.read<PageManger>().goToHome();
+                context.read<PageManager>().goToIntro();
               }
             } else {
               error = '';
@@ -150,7 +149,7 @@ class _IntroState extends State<Intro> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         const Text(
-          'Username',
+          '',
           style: kLabelStyle,
         ),
         const SizedBox(height: 10.0),
@@ -174,7 +173,7 @@ class _IntroState extends State<Intro> {
                 Icons.supervised_user_circle,
                 color: Colors.white,
               ),
-              hintText: 'Username',
+              hintText: 'Champion',
               hintStyle: kHintTextStyle,
             ),
           ),
@@ -225,11 +224,22 @@ class _IntroState extends State<Intro> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: <Widget>[
                               const Text(
-                                "Input Username",
+                                "Get Ready!",
                                 style: TextStyle(
                                   color: Colors.white,
                                   fontFamily: 'OpenSans',
                                   fontSize: 30.0,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              const SizedBox(height: 10.0,),
+                              const Text(
+                                "Before we get started chose the name of a champion",
+                                // maybe some colors in the text, like CHOSE and CHAMPION
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontFamily: 'OpenSans',
+                                  fontSize: 20.0,
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),

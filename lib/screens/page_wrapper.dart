@@ -1,4 +1,5 @@
 import 'package:beerpong_leaderboard/screens/home/home.dart';
+import 'package:beerpong_leaderboard/screens/intro/intro_wrapper.dart';
 import 'package:beerpong_leaderboard/screens/intro/set_username.dart';
 import 'package:beerpong_leaderboard/screens/profile/profile.dart';
 import 'package:beerpong_leaderboard/services/auth.dart';
@@ -16,7 +17,7 @@ class PageWrapper extends StatelessWidget {
   Widget build(BuildContext context) {
     User? user;
 
-    return Consumer<PageManger>(
+    return Consumer<PageManager>(
       builder: (context, manager, child) {
         if (!usernameWasNull) {
           user = Provider.of<User?>(context);
@@ -26,7 +27,7 @@ class PageWrapper extends StatelessWidget {
 
         if (user?.displayName == null) {
           usernameWasNull = true;
-          return Intro(user: user);
+          return SetUsername(user: user);
         }
         switch (manager.currentPage) {
           case 0:
@@ -34,7 +35,9 @@ class PageWrapper extends StatelessWidget {
           case 1:
             return Profile();
           case 2:
-            return Intro(user: user);
+            return SetUsername(user: user);
+          case 3:
+            return const OnBoardingPage();
         }
         return Home();
       },

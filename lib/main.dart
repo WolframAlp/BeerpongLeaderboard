@@ -12,7 +12,7 @@ void main() async {
   runApp(
     MultiProvider(
     providers: [
-      ChangeNotifierProvider(create: (context) => PageManger()),
+      ChangeNotifierProvider(create: (context) => PageManager()),
     ],
     child: const MyApp()
     ),
