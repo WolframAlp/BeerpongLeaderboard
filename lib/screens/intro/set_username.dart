@@ -4,15 +4,20 @@
 
 // TODO make list of just usernames to check against
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:beerpong_leaderboard/utilities/constants.dart';
 import 'package:beerpong_leaderboard/services/page_manager.dart';
+import 'package:beerpong_leaderboard/services/database.dart';
+import 'package:beerpong_leaderboard/utilities/loading.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/services.dart';
-import 'package:beerpong_leaderboard/utilities/constants.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class Intro extends StatefulWidget {
-  Intro({Key? key}) : super(key: key);
+
+  User? user;
+  Intro({Key? key, required this.user}) : super(key: key);
 
   @override
   State<Intro> createState() => _IntroState();
@@ -21,6 +26,7 @@ class Intro extends StatefulWidget {
 class _IntroState extends State<Intro> {
   String username = '';
   String error = '';
+  bool loading = false;
   final _userFormKey = GlobalKey<FormState>();
 
   AppBar _buildAppBar() {
@@ -46,6 +52,18 @@ class _IntroState extends State<Intro> {
     );
   }
 
+  Future<bool> _userNameExists(String? username) async {
+    final snapShot = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(username)
+        .get();
+    if (!snapShot.exists) {
+      return false;
+    } else {
+      return true;
+    }
+  }
+
   String? _validateUsername(String? username) {
     if (username == null) {
       return "Please input username";
@@ -61,7 +79,7 @@ class _IntroState extends State<Intro> {
     }
   }
 
-  Widget _buildSetUsernameBtn() {
+  Widget _buildSetUsernameBtn(User? user) {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 25.0),
       width: double.infinity,
@@ -71,7 +89,24 @@ class _IntroState extends State<Intro> {
           // elevation: 5.0,
           onPressed: () async {
             if (_userFormKey.currentState!.validate()) {
-              print("username checked");
+              setState(() => loading = true);
+              bool exists = await _userNameExists(username);
+              if (exists) {
+                setState(() {
+                  error = "Username Already in Use";
+                  loading = false;
+                });
+              } else {
+                error = '';
+              }
+              await user?.updateDisplayName(username);
+              await DatabaseService(uid: user?.uid, name: username)
+                  .createNewUser();
+              // setState(() {
+              loading = false;
+              // });
+              await user?.reload();
+              context.read<PageManger>().goToHome();
             } else {
               error = '';
             }
@@ -92,6 +127,20 @@ class _IntroState extends State<Intro> {
               fontFamily: 'OpenSans',
             ),
           ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildErrorMessage() {
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 25.0),
+      width: double.infinity,
+      child: Text(
+        error,
+        style: const TextStyle(
+          color: Colors.red,
+          fontSize: 14.0,
         ),
       ),
     );
@@ -137,7 +186,8 @@ class _IntroState extends State<Intro> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    User? user = Provider.of<User?>(context);
+    return loading ? LoadingIcon() : Scaffold(
       appBar: _buildAppBar(),
       body: AnnotatedRegion<SystemUiOverlayStyle>(
         value: SystemUiOverlayStyle.light,
@@ -194,7 +244,8 @@ class _IntroState extends State<Intro> {
                             ],
                           ),
                         ),
-                        _buildSetUsernameBtn(),
+                        _buildSetUsernameBtn(user),
+                        _buildErrorMessage(),
                       ]),
                 ),
               ),

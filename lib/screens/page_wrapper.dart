@@ -1,24 +1,40 @@
 import 'package:beerpong_leaderboard/screens/home/home.dart';
 import 'package:beerpong_leaderboard/screens/intro/set_username.dart';
 import 'package:beerpong_leaderboard/screens/profile/profile.dart';
+import 'package:beerpong_leaderboard/services/auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:beerpong_leaderboard/services/page_manager.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class PageWrapper extends StatelessWidget {
-  const PageWrapper({ Key? key }) : super(key: key);
+  PageWrapper({Key? key}) : super(key: key);
+
+  bool usernameWasNull = false;
 
   @override
   Widget build(BuildContext context) {
+    User? user;
+
     return Consumer<PageManger>(
       builder: (context, manager, child) {
-        switch(manager.currentPage) {
+        if (!usernameWasNull) {
+          user = Provider.of<User?>(context);
+        } else {
+          user = FirebaseAuth.instance.currentUser;
+        }
+
+        if (user?.displayName == null) {
+          usernameWasNull = true;
+          return Intro(user: user);
+        }
+        switch (manager.currentPage) {
           case 0:
-          return Home();
+            return Home();
           case 1:
-          return Profile();
+            return Profile();
           case 2:
-          return Intro();
+            return Intro(user: user);
         }
         return Home();
       },
