@@ -12,8 +12,8 @@ class Home extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return StreamProvider<List<UserModel>?>.value(
-      initialData: null,
+    return StreamProvider<List<UserModel>>.value(
+      initialData: const [],
       value: DatabaseService().users,
       child: Scaffold(
         backgroundColor: const Color(0xFF6CA8F1),

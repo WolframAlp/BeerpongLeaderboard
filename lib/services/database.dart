@@ -3,7 +3,8 @@ import 'package:beerpong_leaderboard/utilities/user.dart';
 
 class DatabaseService {
   final String? uid;
-  DatabaseService({this.uid});
+  final String? name;
+  DatabaseService({this.uid, this.name});
 
   // user collection
   // info : uid, name, win, games, elo, friends
@@ -12,7 +13,6 @@ class DatabaseService {
 
   Future createNewUser() async {
     // TODO needs to check if user already exists
-
     return await userCollection.doc(uid).set({
       'uid': uid,
       'name': '',
@@ -23,8 +23,23 @@ class DatabaseService {
     });
   }
 
-  Stream<List<UserModel>?> get users {
+  Stream<List<UserModel>> get users {
     return userCollection.snapshots().map(_usersFromSnapshot);
+  }
+
+  Stream<UserModel> get userData {
+    return userCollection.doc(uid).snapshots().map(_userDataFromSnapshot);
+  }
+
+  UserModel _userDataFromSnapshot(DocumentSnapshot snapshot) {
+    return UserModel(
+      uid: snapshot.get('uid'),
+      wins: snapshot.get('wins'),
+      games: snapshot.get('games'),
+      name: snapshot.get('name'),
+      elo: snapshot.get('elo'),
+      friends: snapshot.get('friends'),
+    );
   }
 
   // user list from snapshot
