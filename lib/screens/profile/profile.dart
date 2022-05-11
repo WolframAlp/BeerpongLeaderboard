@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:beerpong_leaderboard/utilities/constants.dart';
+import 'package:beerpong_leaderboard/services/page_manager.dart';
 import 'package:provider/provider.dart';
 
 class Profile extends StatefulWidget {
@@ -15,14 +16,23 @@ class _ProfileState extends State<Profile> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.blue[300],
-        title: const Text("NAME OF USER", style: kHintTextStyle, textAlign: TextAlign.center,),
+        title: const Text(
+          "NAME OF USER",
+          style: kHintTextStyle,
+          textAlign: TextAlign.center,
+        ),
         elevation: 0.0,
-          actions: <Widget>[
-            TextButton.icon(
-                onPressed: () {},
-                icon: const Icon(Icons.person),
-                label: const Text("Logout"))
-          ],
+        actions: <Widget>[
+          TextButton.icon(
+              onPressed: context.read<PageManger>().goToHome,
+              icon: const Icon(Icons.home),
+              label: const Text("Home")),
+          TextButton.icon(
+            onPressed: () {},
+            icon: const Icon(Icons.settings),
+            label: const Text("Settings"),
+          ),
+        ],
       ),
     );
   }
