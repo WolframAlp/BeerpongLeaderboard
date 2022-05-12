@@ -12,7 +12,7 @@ void main() async {
   runApp(
     MultiProvider(
     providers: [
-      ChangeNotifierProvider(create: (context) => PageManger())
+      ChangeNotifierProvider(create: (context) => PageManager()),
     ],
     child: const MyApp()
     ),
@@ -29,6 +29,7 @@ class MyApp extends StatelessWidget {
       value: AuthService().user,
       initialData: null,
       child: MaterialApp(
+        theme: ThemeData(primarySwatch: Colors.blue),
         home: Wrapper(),
       ),
     );

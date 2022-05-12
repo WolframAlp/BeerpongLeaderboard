@@ -1,6 +1,6 @@
 import 'package:flutter/foundation.dart';
 
-class PageManger with ChangeNotifier, DiagnosticableTreeMixin {
+class PageManager with ChangeNotifier, DiagnosticableTreeMixin {
   
   int currentPage = 0;
 
@@ -11,6 +11,16 @@ class PageManger with ChangeNotifier, DiagnosticableTreeMixin {
 
   void goToProfile() {
     currentPage = 1;
+    notifyListeners();
+  }
+
+  void goToUsername() {
+    currentPage = 2;
+    notifyListeners();
+  }
+
+  void goToIntro() {
+    currentPage = 3;
     notifyListeners();
   }
 }

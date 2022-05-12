@@ -7,6 +7,11 @@ import 'package:provider/provider.dart';
 import 'package:beerpong_leaderboard/utilities/user.dart';
 import 'package:beerpong_leaderboard/services/page_manager.dart';
 
+
+// Leaderboard of one's friends
+// Push notifications on fridays
+// Tournament option
+
 class Home extends StatelessWidget {
   final AuthService _auth = AuthService();
 
@@ -26,9 +31,14 @@ class Home extends StatelessWidget {
           elevation: 0.0,
           actions: <Widget>[
             TextButton.icon(
-              onPressed: context.read<PageManger>().goToProfile,
+              onPressed: context.read<PageManager>().goToProfile,
               icon: const Icon(Icons.person),
               label: const Text("Profile"),
+            ),
+            TextButton.icon(
+              onPressed: context.read<PageManager>().goToUsername,
+              icon: const Icon(Icons.verified_user),
+              label: const Text("Intro"),
             ),
             TextButton.icon(
                 onPressed: () async {

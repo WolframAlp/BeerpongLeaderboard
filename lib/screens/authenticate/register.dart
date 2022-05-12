@@ -151,7 +151,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
       width: double.infinity,
       child: Text(
         error,
-        style: TextStyle(
+        style: const TextStyle(
           color: Colors.red,
           fontSize: 14.0,
         ),

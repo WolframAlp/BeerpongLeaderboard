@@ -13,15 +13,25 @@ class DatabaseService {
 
   Future createNewUser() async {
     // TODO needs to check if user already exists
-    return await userCollection.doc(uid).set({
+    return await userCollection.doc(name).set({
       'uid': uid,
-      'name': '',
+      'name': name,
       'wins': 0,
       'games': 0,
       'elo': 1000,
       'friends': [],
+      // 'tutorial_complete': false,
     });
   }
+
+  // Future completeTutorial() async {
+  //   return await userCollection.doc(name).set({'tutorial_complete' : true});
+  // }
+
+  // Future<bool> tutorialComplete() async {
+  //   DocumentSnapshot document = await userCollection.doc(name).get();
+  //   return document.get('tutorial_complete');
+  // }
 
   Stream<List<UserModel>> get users {
     return userCollection.snapshots().map(_usersFromSnapshot);

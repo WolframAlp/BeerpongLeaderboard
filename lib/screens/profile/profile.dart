@@ -24,7 +24,7 @@ class _ProfileState extends State<Profile> {
         elevation: 0.0,
         actions: <Widget>[
           TextButton.icon(
-              onPressed: context.read<PageManger>().goToHome,
+              onPressed: context.read<PageManager>().goToHome,
               icon: const Icon(Icons.home),
               label: const Text("Home")),
           TextButton.icon(
