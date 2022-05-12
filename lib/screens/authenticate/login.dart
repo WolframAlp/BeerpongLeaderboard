@@ -4,9 +4,9 @@ import 'package:beerpong_leaderboard/utilities/loading.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:beerpong_leaderboard/utilities/constants.dart';
+import 'package:flutter_signin_button/flutter_signin_button.dart';
 
 // TODO login with google/facebook
-
 
 class LoginScreen extends StatefulWidget {
   @override
@@ -14,7 +14,6 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-
   final AuthService _auth = AuthService();
   final _formKey = GlobalKey<FormState>();
 
@@ -146,6 +145,39 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
+  Widget _buildLoginGoogle() {
+    return SizedBox(
+      width: double.infinity,
+      child: SignInButton(
+        Buttons.Google,
+        text: "Sign in with Google",
+        onPressed: () async {
+          setState(() => loading = true);
+          dynamic result = await _auth.signInWithGoogle();
+          if (result == null) {
+            setState(() {
+              error = "Login using Google failed";
+              loading = false;
+            });
+          } else {
+            error = '';
+          }
+        },
+      ),
+    );
+  }
+
+  Widget _buildLoginFacebook() {
+    return SizedBox(
+      width: double.infinity,
+      child: SignInButton(
+        Buttons.Facebook,
+        text: "Sign in with Facebook",
+        onPressed: () {},
+      ),
+    );
+  }
+
   Widget _buildSignupBtn() {
     return GestureDetector(
       onTap: () {
@@ -181,14 +213,16 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Widget _buildErrorMessage() {
-    return Container(
-      padding: const EdgeInsets.symmetric(vertical: 25.0),
-      width: double.infinity,
-      child: Text(
-        error,
-        style: const TextStyle(
-          color: Colors.red,
-          fontSize: 14.0,
+    return Center(
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 10.0),
+        width: double.infinity,
+        child: Text(
+          error,
+          style: const TextStyle(
+            color: Colors.red,
+            fontSize: 14.0,
+          ),
         ),
       ),
     );
@@ -196,74 +230,78 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return loading ? LoadingIcon() : Scaffold(
-      body: AnnotatedRegion<SystemUiOverlayStyle>(
-        value: SystemUiOverlayStyle.light,
-        child: GestureDetector(
-          onTap: () => FocusScope.of(context).unfocus(),
-          child: Stack(
-            children: <Widget>[
-              Container(
-                height: double.infinity,
-                width: double.infinity,
-                decoration: const BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    colors: [
-                      Color(0xFF73AEF5),
-                      Color(0xFF61A4F1),
-                      Color(0xFF478DE0),
-                      Color(0xFF398AE5),
-                    ],
-                    stops: [0.1, 0.4, 0.7, 0.9],
-                  ),
-                ),
-              ),
-              Container(
-                height: double.infinity,
-                child: SingleChildScrollView(
-                  physics: AlwaysScrollableScrollPhysics(),
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 40.0,
-                    vertical: 120.0,
-                  ),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      const Text(
-                        'Sign In',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontFamily: 'OpenSans',
-                          fontSize: 30.0,
-                          fontWeight: FontWeight.bold,
+    return loading
+        ? LoadingIcon()
+        : Scaffold(
+            body: AnnotatedRegion<SystemUiOverlayStyle>(
+              value: SystemUiOverlayStyle.light,
+              child: GestureDetector(
+                onTap: () => FocusScope.of(context).unfocus(),
+                child: Stack(
+                  children: <Widget>[
+                    Container(
+                      height: double.infinity,
+                      width: double.infinity,
+                      decoration: const BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
+                          colors: [
+                            Color(0xFF73AEF5),
+                            Color(0xFF61A4F1),
+                            Color(0xFF478DE0),
+                            Color(0xFF398AE5),
+                          ],
+                          stops: [0.1, 0.4, 0.7, 0.9],
                         ),
                       ),
-                      const SizedBox(height: 30.0),
-                      Form(
-                        key: _formKey,
+                    ),
+                    SizedBox(
+                      height: double.infinity,
+                      child: SingleChildScrollView(
+                        physics: const AlwaysScrollableScrollPhysics(),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 40.0,
+                          vertical: 120.0,
+                        ),
                         child: Column(
-                          children: [
-                            _buildEmailTF(),
-                            const SizedBox(
-                              height: 30.0,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: <Widget>[
+                            const Text(
+                              'Sign In',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontFamily: 'OpenSans',
+                                fontSize: 30.0,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
-                            _buildPasswordTF(),
+                            const SizedBox(height: 30.0),
+                            Form(
+                              key: _formKey,
+                              child: Column(
+                                children: [
+                                  _buildEmailTF(),
+                                  const SizedBox(
+                                    height: 30.0,
+                                  ),
+                                  _buildPasswordTF(),
+                                ],
+                              ),
+                            ),
+                            _buildLoginBtn(),
+                            _buildSignupBtn(),
+                            _buildErrorMessage(),
+                            _buildLoginGoogle(),
+                            _buildLoginFacebook(),
                           ],
                         ),
                       ),
-                      _buildLoginBtn(),
-                      _buildSignupBtn(),
-                      _buildErrorMessage(),
-                    ],
-                  ),
+                    )
+                  ],
                 ),
-              )
-            ],
-          ),
-        ),
-      ),
-    );
+              ),
+            ),
+          );
   }
 }

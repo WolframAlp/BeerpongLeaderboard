@@ -13,7 +13,6 @@ import 'package:beerpong_leaderboard/utilities/loading.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/services.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:beerpong_leaderboard/screens/intro/intro_wrapper.dart';
 
 class SetUsername extends StatefulWidget {
   User? user;
@@ -99,10 +98,10 @@ class _SetUsernameState extends State<SetUsername> {
               } else {
                 error = '';
                 await user?.updateDisplayName(username);
-                await DatabaseService(uid: user?.uid, name: username)
+                await user?.reload();
+                DatabaseService(uid: user?.uid, name: username)
                     .createNewUser();
                 loading = false;
-                await user?.reload();
                 context.read<PageManager>().goToIntro();
               }
             } else {
