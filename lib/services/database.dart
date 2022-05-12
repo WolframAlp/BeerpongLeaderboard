@@ -20,8 +20,18 @@ class DatabaseService {
       'games': 0,
       'elo': 1000,
       'friends': [],
+      // 'tutorial_complete': false,
     });
   }
+
+  // Future completeTutorial() async {
+  //   return await userCollection.doc(name).set({'tutorial_complete' : true});
+  // }
+
+  // Future<bool> tutorialComplete() async {
+  //   DocumentSnapshot document = await userCollection.doc(name).get();
+  //   return document.get('tutorial_complete');
+  // }
 
   Stream<List<UserModel>> get users {
     return userCollection.snapshots().map(_usersFromSnapshot);

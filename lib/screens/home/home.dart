@@ -7,6 +7,11 @@ import 'package:provider/provider.dart';
 import 'package:beerpong_leaderboard/utilities/user.dart';
 import 'package:beerpong_leaderboard/services/page_manager.dart';
 
+
+// Leaderboard of one's friends
+// Push notifications on fridays
+// Tournament option
+
 class Home extends StatelessWidget {
   final AuthService _auth = AuthService();
 
