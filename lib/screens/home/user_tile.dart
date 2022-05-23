@@ -19,7 +19,7 @@ class UserTile extends StatelessWidget {
             backgroundColor: Colors.yellow[user.wins*10],
           ),
           title: Text(
-            user.uid,
+            user.name,
             style: kLabelStyle,
           ),
           subtitle: Text(
