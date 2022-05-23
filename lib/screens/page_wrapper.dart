@@ -2,6 +2,8 @@ import 'package:beerpong_leaderboard/screens/home/home.dart';
 import 'package:beerpong_leaderboard/screens/intro/intro_wrapper.dart';
 import 'package:beerpong_leaderboard/screens/intro/set_username.dart';
 import 'package:beerpong_leaderboard/screens/profile/profile.dart';
+import 'package:beerpong_leaderboard/screens/rules/rules.dart';
+import 'package:beerpong_leaderboard/screens/settings/settings.dart';
 import 'package:beerpong_leaderboard/services/database.dart';
 import 'package:beerpong_leaderboard/utilities/loading.dart';
 import 'package:beerpong_leaderboard/utilities/user.dart';
@@ -32,7 +34,7 @@ class PageWrapper extends StatelessWidget {
       stream: DatabaseService(uid: user?.uid, name: user?.displayName).users,
       builder: (context, snapshot) {
         if (snapshot.hasData) {
-          List<UserModel>? userData = snapshot.data;
+          List<UserModel> userData = snapshot.data!;
 
           if (!usernameWasNull) {
             user = Provider.of<User?>(context);
@@ -43,7 +45,7 @@ class PageWrapper extends StatelessWidget {
           if (user?.displayName == null) {
             usernameWasNull = true;
             return SetUsername(user: user);
-          } else if (!userExists(userData!, user?.displayName)) {
+          } else if (!userExists(userData, user?.displayName)) {
             usernameWasNull = true;
             return SetUsername(user: user);
           }
@@ -59,6 +61,10 @@ class PageWrapper extends StatelessWidget {
                   return SetUsername(user: user);
                 case 3:
                   return const OnBoardingPage();
+                case 4:
+                  return Settings();
+                case 5:
+                  return Rules();
               }
               return Home();
             },

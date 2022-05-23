@@ -1,6 +1,7 @@
 import 'package:beerpong_leaderboard/screens/wrapper.dart';
 import 'package:beerpong_leaderboard/services/auth.dart';
 import 'package:beerpong_leaderboard/services/page_manager.dart';
+import 'package:beerpong_leaderboard/utilities/user.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -13,6 +14,7 @@ void main() async {
     MultiProvider(
     providers: [
       ChangeNotifierProvider(create: (context) => PageManager()),
+      ChangeNotifierProvider(create: (context) => LastUserLoad())
     ],
     child: const MyApp()
     ),

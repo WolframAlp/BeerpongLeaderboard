@@ -1,3 +1,4 @@
+import 'package:beerpong_leaderboard/screens/buttom_navigation.dart';
 import 'package:beerpong_leaderboard/screens/home/user_list.dart';
 import 'package:beerpong_leaderboard/services/auth.dart';
 import 'package:flutter/material.dart';
@@ -22,32 +23,7 @@ class Home extends StatelessWidget {
       value: DatabaseService().users,
       child: Scaffold(
         backgroundColor: const Color(0xFF6CA8F1),
-        appBar: AppBar(
-          backgroundColor: Colors.blue[300],
-          title: const Text(
-            "Home Screen",
-            style: kHintTextStyle,
-          ),
-          elevation: 0.0,
-          actions: <Widget>[
-            TextButton.icon(
-              onPressed: context.read<PageManager>().goToProfile,
-              icon: const Icon(Icons.person),
-              label: const Text("Profile"),
-            ),
-            TextButton.icon(
-              onPressed: context.read<PageManager>().goToUsername,
-              icon: const Icon(Icons.verified_user),
-              label: const Text("Intro"),
-            ),
-            TextButton.icon(
-                onPressed: () async {
-                  await _auth.signOut();
-                },
-                icon: const Icon(Icons.logout),
-                label: const Text("Logout")),
-          ],
-        ),
+        bottomNavigationBar: getCostumNavigationBar(context, 0),
         body: UserList(),
       ),
     );

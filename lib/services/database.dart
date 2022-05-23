@@ -20,7 +20,6 @@ class DatabaseService {
       'games': 0,
       'elo': 1000,
       'friends': [],
-      // 'tutorial_complete': false,
     });
   }
 
@@ -38,7 +37,7 @@ class DatabaseService {
   }
 
   Stream<UserModel> get userData {
-    return userCollection.doc(uid).snapshots().map(_userDataFromSnapshot);
+    return userCollection.doc(name).snapshots().map(_userDataFromSnapshot);
   }
 
   UserModel _userDataFromSnapshot(DocumentSnapshot snapshot) {

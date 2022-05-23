@@ -23,4 +23,14 @@ class PageManager with ChangeNotifier, DiagnosticableTreeMixin {
     currentPage = 3;
     notifyListeners();
   }
+
+  void goToSettings() {
+    currentPage = 4;
+    notifyListeners();
+  }
+
+  void goToRules() {
+    currentPage = 5;
+    notifyListeners();
+  }
 }
