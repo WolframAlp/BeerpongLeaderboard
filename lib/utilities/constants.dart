@@ -38,6 +38,21 @@ const profileValueLabelStyle = TextStyle(
   fontSize: 20.0,
 );
 
+// Label style for large titles
+const  largeTitleLabelStyle = TextStyle(
+  color: Colors.orangeAccent,
+  fontWeight: FontWeight.bold,
+  fontFamily: 'OpenSans',
+  fontSize: 28.0,
+);
+
+// Label style for small hidden text
+const smallHiddenLabelStyle = TextStyle(
+  color: Colors.white60,
+  fontFamily: 'OpenSans',
+  fontSize: 16.0,
+);
+
 //*****************************************
 // Box decorators
 //*****************************************

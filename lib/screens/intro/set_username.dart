@@ -99,8 +99,9 @@ class _SetUsernameState extends State<SetUsername> {
                 error = '';
                 await user?.updateDisplayName(username);
                 await user?.reload();
-                DatabaseService(uid: user?.uid, name: username)
-                    .createNewUser();
+                DatabaseService database = DatabaseService(uid: user?.uid, name: username);
+                await database.createNewUser();
+                await database.createtrophyUser();
                 loading = false;
                 context.read<PageManager>().goToIntro();
               }

@@ -1,3 +1,4 @@
+import 'package:beerpong_leaderboard/utilities/trophy.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:beerpong_leaderboard/utilities/user.dart';
 
@@ -11,8 +12,11 @@ class DatabaseService {
   final CollectionReference userCollection =
       FirebaseFirestore.instance.collection('users');
 
+  final CollectionReference trophysCollection =
+      FirebaseFirestore.instance.collection('trophys');
+
+  // Create new user in database
   Future createNewUser() async {
-    // TODO needs to check if user already exists
     return await userCollection.doc(name).set({
       'uid': uid,
       'name': name,
@@ -21,6 +25,20 @@ class DatabaseService {
       'elo': 1000,
       'friends': [],
     });
+  }
+
+  // Create new database entry in trophies
+  Future createtrophyUser() async {
+    return await trophysCollection.doc(name).set({
+      "CoolName": FieldValue.serverTimestamp(),
+    });
+  }
+
+  // Add a new trophy to the current user
+  Future addtrophyToUser(String trophyName) async {
+    return await trophysCollection
+        .doc(name)
+        .set({trophyName: FieldValue.serverTimestamp()});
   }
 
   // Future completeTutorial() async {
@@ -32,14 +50,36 @@ class DatabaseService {
   //   return document.get('tutorial_complete');
   // }
 
+  // All users list data stream
   Stream<List<UserModel>> get users {
     return userCollection.snapshots().map(_usersFromSnapshot);
   }
 
+  // Current user data stream
   Stream<UserModel> get userData {
     return userCollection.doc(name).snapshots().map(_userDataFromSnapshot);
   }
 
+  // Trophy stream
+  Stream<TrophyModel> get trophys {
+    return trophysCollection.doc(name).snapshots().map(_trophysFromSnapshot);
+  }
+
+  // Single user's trophies from document snapshot
+  TrophyModel _trophysFromSnapshot(DocumentSnapshot snapshot) {
+    List<String> trophyNames = [];
+    List<Timestamp> trophyTimes = [];
+    List<Map> trophyMap = [];
+    Map data = snapshot.data() as Map<String, dynamic>;
+    for (var key in data.keys) {
+      trophyNames.add(key);
+      trophyTimes.add(data[key]);
+      trophyMap.add({key:data[key]});
+    }
+    return TrophyModel(trophyNames: trophyNames, trophyTimes: trophyTimes, trophyMap: trophyMap);
+  }
+
+  // Single user from document snapshot
   UserModel _userDataFromSnapshot(DocumentSnapshot snapshot) {
     return UserModel(
       uid: snapshot.get('uid'),
@@ -64,6 +104,4 @@ class DatabaseService {
       );
     }).toList();
   }
-
-  Future updateUser() async {}
 }

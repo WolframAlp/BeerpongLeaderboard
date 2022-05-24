@@ -14,19 +14,6 @@ class AuthService with ChangeNotifier, DiagnosticableTreeMixin {
     return _auth.authStateChanges();
   }
 
-  // sign in anonymously
-  // Future signInAnon() async {
-  //   try {
-  //     UserCredential user_credential = await _auth.signInAnonymously();
-  //     User? user = user_credential.user;
-  //     return user;
-  //   }
-  //   catch(e) {
-  //     print(e.toString());
-  //     return null;
-  //   }
-  // }
-
   // sign in with email
   Future signInEmail(String email, String password) async {
     try {
@@ -46,7 +33,6 @@ class AuthService with ChangeNotifier, DiagnosticableTreeMixin {
       UserCredential credential = await _auth.createUserWithEmailAndPassword(
           email: email, password: password);
       User? user = credential.user;
-      // await DatabaseService(uid: user?.uid).createNewUser();
       return user;
     } catch (e) {
       print(e.toString());
