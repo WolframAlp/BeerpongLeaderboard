@@ -41,6 +41,21 @@ class DatabaseService {
         .set({trophyName: FieldValue.serverTimestamp()});
   }
 
+  Future updateUserWinsAndGames() async {
+    DocumentSnapshot document = await userCollection.doc(name).get();
+    return await userCollection.doc(name).set({
+      "games": document.get("games") + 1,
+      "wins": document.get("wins") + 1,
+    });
+  }
+
+  Future updateUserGames() async {
+    DocumentSnapshot document = await userCollection.doc(name).get();
+    return await userCollection.doc(name).set({
+      "games": document.get("games") + 1,
+    });
+  }
+
   // Future completeTutorial() async {
   //   return await userCollection.doc(name).set({'tutorial_complete' : true});
   // }
