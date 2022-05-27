@@ -39,7 +39,7 @@ class _SetUsernameState extends State<SetUsername> {
       elevation: 0.0,
       actions: <Widget>[
         TextButton.icon(
-            onPressed: context.read<PageManager>().goToHome,
+            onPressed: context.read<PageManager>().goToRegistration,
             icon: const Icon(Icons.home),
             label: const Text("Home")),
         TextButton.icon(
@@ -99,8 +99,9 @@ class _SetUsernameState extends State<SetUsername> {
                 error = '';
                 await user?.updateDisplayName(username);
                 await user?.reload();
-                DatabaseService(uid: user?.uid, name: username)
-                    .createNewUser();
+                DatabaseService database = DatabaseService(uid: user?.uid, name: username);
+                await database.createNewUser();
+                await database.createtrophyUser();
                 loading = false;
                 context.read<PageManager>().goToIntro();
               }

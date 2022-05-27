@@ -4,23 +4,39 @@ class PageManager with ChangeNotifier, DiagnosticableTreeMixin {
   
   int currentPage = 0;
 
-  void goToHome() {
+  void goToLeaderboard() {
     currentPage = 0;
     notifyListeners();
   }
 
-  void goToProfile() {
+  void goToNotifications() {
     currentPage = 1;
     notifyListeners();
   }
 
-  void goToUsername() {
+  void goToRegistration() {
     currentPage = 2;
     notifyListeners();
   }
 
-  void goToIntro() {
+  void goToRules() {
     currentPage = 3;
     notifyListeners();
   }
+
+  void goToProfile() {
+    currentPage = 4;
+    notifyListeners();
+  }
+
+  void goToUsername() {
+    currentPage = 5;
+    notifyListeners();
+  }
+
+  void goToIntro() {
+    currentPage = 6;
+    notifyListeners();
+  }
+
 }

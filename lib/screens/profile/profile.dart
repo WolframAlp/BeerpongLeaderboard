@@ -1,6 +1,11 @@
+import 'package:beerpong_leaderboard/screens/buttom_navigation.dart';
+import 'package:beerpong_leaderboard/screens/profile/profile_head.dart';
+import 'package:beerpong_leaderboard/screens/profile/trophys.dart';
+import 'package:beerpong_leaderboard/services/database.dart';
+import 'package:beerpong_leaderboard/utilities/trophy.dart';
+import 'package:beerpong_leaderboard/utilities/user.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:beerpong_leaderboard/utilities/constants.dart';
-import 'package:beerpong_leaderboard/services/page_manager.dart';
 import 'package:provider/provider.dart';
 
 class Profile extends StatefulWidget {
@@ -13,26 +18,28 @@ class Profile extends StatefulWidget {
 class _ProfileState extends State<Profile> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.blue[300],
-        title: const Text(
-          "NAME OF USER",
-          style: kHintTextStyle,
-          textAlign: TextAlign.center,
-        ),
-        elevation: 0.0,
-        actions: <Widget>[
-          TextButton.icon(
-              onPressed: context.read<PageManager>().goToHome,
-              icon: const Icon(Icons.home),
-              label: const Text("Home")),
-          TextButton.icon(
-            onPressed: () {},
-            icon: const Icon(Icons.settings),
-            label: const Text("Settings"),
+    User? firebaseUser = Provider.of<User?>(context);
+    return StreamProvider<TrophyModel>.value(
+      initialData: TrophyModel(),
+      value: DatabaseService(
+                uid: firebaseUser?.uid, name: firebaseUser?.displayName)
+            .trophys,
+      child: StreamProvider<UserModel>.value(
+        value: DatabaseService(
+                uid: firebaseUser?.uid, name: firebaseUser?.displayName)
+            .userData,
+        initialData: context.read<LastUserLoad>().lastLoad,
+        child: Scaffold(
+          bottomNavigationBar: getCostumNavigationBar(context, 4),
+          backgroundColor: const Color(0xFF6CA8F1),
+          body: Column(
+            children: const <Widget>[
+              ProfileHead(),
+              SizedBox(height: 40.0,),
+              TrophyHead(),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }

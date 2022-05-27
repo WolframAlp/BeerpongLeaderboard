@@ -1,7 +1,7 @@
+import 'package:beerpong_leaderboard/services/page_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:introduction_screen/introduction_screen.dart';
-
-
+import 'package:provider/provider.dart';
 
 //*****************************************
 // Text styles
@@ -23,6 +23,35 @@ const kLabelStyle = TextStyle(
   fontFamily: 'OpenSans',
 );
 
+// Label style for profile info
+const profileLabelStyle = TextStyle(
+  color: Colors.black,
+  fontFamily: 'OpenSans',
+  fontSize: 20.0,
+);
+
+// Label style for profile info values
+const profileValueLabelStyle = TextStyle(
+  color: Colors.amber,
+  fontWeight: FontWeight.bold,
+  fontFamily: 'OpenSans',
+  fontSize: 20.0,
+);
+
+// Label style for large titles
+const  largeTitleLabelStyle = TextStyle(
+  color: Colors.orangeAccent,
+  fontWeight: FontWeight.bold,
+  fontFamily: 'OpenSans',
+  fontSize: 28.0,
+);
+
+// Label style for small hidden text
+const smallHiddenLabelStyle = TextStyle(
+  color: Colors.white60,
+  fontFamily: 'OpenSans',
+  fontSize: 16.0,
+);
 
 //*****************************************
 // Box decorators
@@ -41,7 +70,6 @@ final kBoxDecorationStyle = BoxDecoration(
   ],
 );
 
-
 //*****************************************
 // Page decorators
 //*****************************************
@@ -57,8 +85,6 @@ const pageDecoration = PageDecoration(
 
 // Global keys
 final introKey = GlobalKey<IntroductionScreenState>();
-
-
 
 //*****************************************
 // Functions
@@ -78,4 +104,28 @@ Widget buildFullscreenImage(String assetName) {
     width: double.infinity,
     alignment: Alignment.center,
   );
+}
+
+// On tapped method for navigation using navigation bar
+void onTappedNavigation(BuildContext context, int newIndex, int currIndex) {
+  if (newIndex == currIndex) {
+    return;
+  }
+  switch (newIndex) {
+    case 0:
+      context.read<PageManager>().goToLeaderboard();
+      break;
+    case 1:
+      context.read<PageManager>().goToNotifications();
+      break;
+    case 2:
+      context.read<PageManager>().goToRegistration();
+      break;
+    case 3:
+      context.read<PageManager>().goToRules();
+      break;
+    case 4:
+      context.read<PageManager>().goToProfile();
+      break;
+  }
 }
