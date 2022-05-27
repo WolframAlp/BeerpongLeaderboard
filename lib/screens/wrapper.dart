@@ -11,7 +11,7 @@ class Wrapper extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
 
-    final user = Provider.of<User?>(context);
+    User? user = Provider.of<User?>(context);
     print(user);
     bool logged_out = true;
 
@@ -20,7 +20,7 @@ class Wrapper extends StatelessWidget {
       return Authenticate();
     } else {
       if (logged_out){
-        context.read<PageManager>().currentPage = 0;
+        context.read<PageManager>().currentPage = 2;
         logged_out = false;
       }
       return PageWrapper();

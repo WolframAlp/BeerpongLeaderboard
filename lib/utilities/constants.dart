@@ -113,16 +113,19 @@ void onTappedNavigation(BuildContext context, int newIndex, int currIndex) {
   }
   switch (newIndex) {
     case 0:
-      context.read<PageManager>().goToHome();
+      context.read<PageManager>().goToLeaderboard();
       break;
     case 1:
-      context.read<PageManager>().goToProfile();
+      context.read<PageManager>().goToNotifications();
       break;
     case 2:
-      context.read<PageManager>().goToRules();
+      context.read<PageManager>().goToRegistration();
       break;
     case 3:
-      context.read<PageManager>().goToSettings();
+      context.read<PageManager>().goToRules();
+      break;
+    case 4:
+      context.read<PageManager>().goToProfile();
       break;
   }
 }

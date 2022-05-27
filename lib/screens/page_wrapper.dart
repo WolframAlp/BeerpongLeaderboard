@@ -1,9 +1,10 @@
 import 'package:beerpong_leaderboard/screens/home/home.dart';
 import 'package:beerpong_leaderboard/screens/intro/intro_wrapper.dart';
 import 'package:beerpong_leaderboard/screens/intro/set_username.dart';
+import 'package:beerpong_leaderboard/screens/leaderboard/leaderboard.dart';
+import 'package:beerpong_leaderboard/screens/notifications/notifications.dart';
 import 'package:beerpong_leaderboard/screens/profile/profile.dart';
 import 'package:beerpong_leaderboard/screens/rules/rules.dart';
-import 'package:beerpong_leaderboard/screens/settings/settings.dart';
 import 'package:beerpong_leaderboard/services/database.dart';
 import 'package:beerpong_leaderboard/utilities/loading.dart';
 import 'package:beerpong_leaderboard/utilities/user.dart';
@@ -54,17 +55,19 @@ class PageWrapper extends StatelessWidget {
             builder: (context, manager, child) {
               switch (manager.currentPage) {
                 case 0:
-                  return Home();
+                  return const LeaderBoard();
                 case 1:
-                  return Profile();
+                  return const Notifications();
                 case 2:
-                  return SetUsername(user: user);
+                  return Home(); // registration
                 case 3:
-                  return const OnBoardingPage();
+                  return const Rules();
                 case 4:
-                  return Settings();
+                  return Profile();
                 case 5:
-                  return Rules();
+                  return SetUsername(user: user);
+                case 6:
+                  return const OnBoardingPage();
               }
               return Home();
             },

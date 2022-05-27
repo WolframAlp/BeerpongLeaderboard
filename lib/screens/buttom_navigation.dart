@@ -14,20 +14,24 @@ class CostumNavigationBar extends BottomNavigationBar {
           type: BottomNavigationBarType.fixed,
           items: const <BottomNavigationBarItem>[
             BottomNavigationBarItem(
-              icon: Icon(Icons.home),
-              label: 'Home',
+              icon: Icon(Icons.leaderboard),
+              label: 'LeaderBoard',
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.person),
-              label: 'Profile',
+              icon: Icon(Icons.notifications),
+              label: 'Notifications',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.plus_one),
+              label: 'Register',
             ),
             BottomNavigationBarItem(
               icon: Icon(Icons.info),
               label: 'Rules',
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.settings),
-              label: 'Settings',
+              icon: Icon(Icons.person),
+              label: 'Profile',
             ),
           ],
           currentIndex: currIndex,

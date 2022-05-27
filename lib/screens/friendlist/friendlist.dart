@@ -1,12 +1,18 @@
+// all friends and a search function
+
+// a button for searching new people
+
+// friend suggestions??
+
 import 'package:beerpong_leaderboard/services/page_manager.dart';
 import 'package:beerpong_leaderboard/utilities/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:beerpong_leaderboard/services/auth.dart';
 
-class Settings extends StatelessWidget {
+class FriendList extends StatelessWidget {
   final AuthService _auth = AuthService();
-  Settings({Key? key}) : super(key: key);
+  FriendList({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -14,7 +20,7 @@ class Settings extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: Colors.blue[300],
         title: const Text(
-          "Settings",
+          "FriendList or at lease will be",
           style: kHintTextStyle,
         ),
         elevation: 0.0,

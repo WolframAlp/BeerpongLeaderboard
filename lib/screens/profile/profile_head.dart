@@ -1,3 +1,5 @@
+import 'package:beerpong_leaderboard/screens/friendlist/friendlist.dart';
+import 'package:beerpong_leaderboard/screens/settings/settings.dart';
 import 'package:beerpong_leaderboard/utilities/user.dart';
 import 'package:beerpong_leaderboard/utilities/constants.dart';
 import 'package:flutter/material.dart';
@@ -12,7 +14,6 @@ class ProfileHead extends StatefulWidget {
 }
 
 class _ProfileHeadState extends State<ProfileHead> {
-
   double iconSize = 32;
 
   Column getLeftColumn(UserModel user) {
@@ -25,8 +26,11 @@ class _ProfileHeadState extends State<ProfileHead> {
               color: Colors.grey[300],
               child: IconButton(
                 color: Colors.black,
-                onPressed: () {},
-                icon: const Icon(Icons.person_add),
+                onPressed: () {
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => FriendList()));
+                },
+                icon: const Icon(Icons.people),
                 iconSize: iconSize,
               ),
             ),
@@ -40,8 +44,14 @@ class _ProfileHeadState extends State<ProfileHead> {
           children: [
             Column(
               children: [
-                const Text("Wins", style: profileLabelStyle,),
-                Text("${user.wins}", style: profileValueLabelStyle,),
+                const Text(
+                  "Wins",
+                  style: profileLabelStyle,
+                ),
+                Text(
+                  "${user.wins}",
+                  style: profileValueLabelStyle,
+                ),
               ],
             )
           ],
@@ -54,8 +64,14 @@ class _ProfileHeadState extends State<ProfileHead> {
           children: [
             Column(
               children: [
-                const Text("Games", style: profileLabelStyle,),
-                Text("${user.games}", style: profileValueLabelStyle,),
+                const Text(
+                  "Games",
+                  style: profileLabelStyle,
+                ),
+                Text(
+                  "${user.games}",
+                  style: profileValueLabelStyle,
+                ),
               ],
             )
           ],
@@ -75,8 +91,14 @@ class _ProfileHeadState extends State<ProfileHead> {
           fontsize: 30.0,
         ),
         const SizedBox(height: 45.0),
-        const Text("Elo", style: profileLabelStyle,),
-        Text("${user.elo}", style: profileValueLabelStyle,),
+        const Text(
+          "Elo",
+          style: profileLabelStyle,
+        ),
+        Text(
+          "${user.elo}",
+          style: profileValueLabelStyle,
+        ),
       ],
     );
   }
@@ -100,7 +122,10 @@ class _ProfileHeadState extends State<ProfileHead> {
               color: Colors.grey[300],
               child: IconButton(
                 color: Colors.black,
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => Settings()));
+                },
                 icon: const Icon(Icons.settings),
                 iconSize: iconSize,
               ),
@@ -115,8 +140,14 @@ class _ProfileHeadState extends State<ProfileHead> {
           children: [
             Column(
               children: [
-                const Text("Win/Lose", style: profileLabelStyle,),
-                Text("${getWinLose(user)}", style: profileValueLabelStyle,),
+                const Text(
+                  "Win/Lose",
+                  style: profileLabelStyle,
+                ),
+                Text(
+                  "${getWinLose(user)}",
+                  style: profileValueLabelStyle,
+                ),
               ],
             )
           ],
@@ -129,8 +160,14 @@ class _ProfileHeadState extends State<ProfileHead> {
           children: [
             Column(
               children: [
-                const Text("Games", style: profileLabelStyle,),
-                Text("${user.games}", style: profileValueLabelStyle,),
+                const Text(
+                  "Games",
+                  style: profileLabelStyle,
+                ),
+                Text(
+                  "${user.games}",
+                  style: profileValueLabelStyle,
+                ),
               ],
             )
           ],
@@ -141,7 +178,7 @@ class _ProfileHeadState extends State<ProfileHead> {
 
   @override
   Widget build(BuildContext context) {
-    final user = Provider.of<UserModel>(context);
+    UserModel user = Provider.of<UserModel>(context);
     context.read<LastUserLoad>().setNewModel(user);
     return Row(
       children: [

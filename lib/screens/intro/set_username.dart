@@ -39,7 +39,7 @@ class _SetUsernameState extends State<SetUsername> {
       elevation: 0.0,
       actions: <Widget>[
         TextButton.icon(
-            onPressed: context.read<PageManager>().goToHome,
+            onPressed: context.read<PageManager>().goToRegistration,
             icon: const Icon(Icons.home),
             label: const Text("Home")),
         TextButton.icon(

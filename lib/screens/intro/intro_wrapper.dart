@@ -44,7 +44,7 @@ class _OnBoardingPageState extends State<OnBoardingPage> {
             'Let\'s go right away!',
             style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold),
           ),
-          onPressed: context.read<PageManager>().goToHome,
+          onPressed: context.read<PageManager>().goToRegistration,
         ),
       ),
       pages: [
@@ -55,8 +55,8 @@ class _OnBoardingPageState extends State<OnBoardingPage> {
         GetIntroPage5(),
         GetIntroPage6(),
       ],
-      onDone: context.read<PageManager>().goToHome,
-      onSkip: context.read<PageManager>().goToHome, // You can override onSkip callback
+      onDone: context.read<PageManager>().goToRegistration,
+      onSkip: context.read<PageManager>().goToRegistration, // You can override onSkip callback
       showSkipButton: false,
       skipOrBackFlex: 0,
       nextFlex: 0,

@@ -30,7 +30,7 @@ class _ProfileState extends State<Profile> {
             .userData,
         initialData: context.read<LastUserLoad>().lastLoad,
         child: Scaffold(
-          bottomNavigationBar: getCostumNavigationBar(context, 1),
+          bottomNavigationBar: getCostumNavigationBar(context, 4),
           backgroundColor: const Color(0xFF6CA8F1),
           body: Column(
             children: const <Widget>[

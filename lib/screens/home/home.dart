@@ -23,7 +23,7 @@ class Home extends StatelessWidget {
       value: DatabaseService().users,
       child: Scaffold(
         backgroundColor: const Color(0xFF6CA8F1),
-        bottomNavigationBar: getCostumNavigationBar(context, 0),
+        bottomNavigationBar: getCostumNavigationBar(context, 2),
         body: UserList(),
       ),
     );
