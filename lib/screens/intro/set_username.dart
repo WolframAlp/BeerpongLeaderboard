@@ -102,6 +102,7 @@ class _SetUsernameState extends State<SetUsername> {
                 DatabaseService database = DatabaseService(uid: user?.uid, name: username);
                 await database.createNewUser();
                 await database.createtrophyUser();
+                await database.createrUserOnLeaderboard();
                 loading = false;
                 context.read<PageManager>().goToIntro();
               }

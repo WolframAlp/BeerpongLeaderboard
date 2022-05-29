@@ -1,6 +1,8 @@
 import 'package:beerpong_leaderboard/screens/wrapper.dart';
 import 'package:beerpong_leaderboard/services/auth.dart';
+import 'package:beerpong_leaderboard/services/database.dart';
 import 'package:beerpong_leaderboard/services/page_manager.dart';
+import 'package:beerpong_leaderboard/utilities/leaderboard.dart';
 import 'package:beerpong_leaderboard/utilities/trophy.dart';
 import 'package:beerpong_leaderboard/utilities/user.dart';
 import 'package:flutter/material.dart';
@@ -17,6 +19,8 @@ void main() async {
       ChangeNotifierProvider(create: (context) => PageManager()),
       ChangeNotifierProvider(create: (context) => LastUserLoad()),
       ChangeNotifierProvider(create: (context) => LastTrophyLoad()),
+      ChangeNotifierProvider(create: (context) => LastLeaderboardLoad()),
+      ChangeNotifierProvider(create: (context) => DatabaseService())
     ],
     child: const MyApp()
     ),
