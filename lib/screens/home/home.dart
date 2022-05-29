@@ -18,13 +18,16 @@ class Home extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return StreamProvider<List<UserModel>>.value(
-      initialData: const [],
-      value: DatabaseService().users,
-      child: Scaffold(
-        backgroundColor: const Color(0xFF6CA8F1),
-        bottomNavigationBar: getCostumNavigationBar(context, 2),
-        body: UserList(),
+    return WillPopScope(
+      onWillPop: () async {context.read<PageManager>().goBackOneScreen(); return false;},
+      child: StreamProvider<List<UserModel>>.value(
+        initialData: const [],
+        value: context.read<DatabaseService>().users,
+        child: Scaffold(
+          backgroundColor: const Color(0xFF6CA8F1),
+          bottomNavigationBar: getCostumNavigationBar(context, 2),
+          body: UserList(),
+        ),
       ),
     );
   }

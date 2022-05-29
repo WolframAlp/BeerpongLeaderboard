@@ -1,4 +1,5 @@
 import 'package:beerpong_leaderboard/screens/authenticate/authenticate.dart';
+import 'package:beerpong_leaderboard/services/database.dart';
 import 'package:beerpong_leaderboard/services/page_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -20,6 +21,8 @@ class Wrapper extends StatelessWidget {
       return Authenticate();
     } else {
       if (logged_out){
+        context.read<DatabaseService>().name = user.displayName;
+        context.read<DatabaseService>().uid = user.uid;
         context.read<PageManager>().currentPage = 2;
         logged_out = false;
       }

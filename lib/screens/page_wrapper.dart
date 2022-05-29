@@ -32,7 +32,7 @@ class PageWrapper extends StatelessWidget {
     User? user = Provider.of<User?>(context);
 
     return StreamBuilder<List<UserModel>>(
-      stream: DatabaseService(uid: user?.uid, name: user?.displayName).users,
+      stream: context.read<DatabaseService>().users,
       builder: (context, snapshot) {
         if (snapshot.hasData) {
           List<UserModel> userData = snapshot.data!;
@@ -55,7 +55,7 @@ class PageWrapper extends StatelessWidget {
             builder: (context, manager, child) {
               switch (manager.currentPage) {
                 case 0:
-                  return const LeaderBoard();
+                  return LeaderBoard();
                 case 1:
                   return const Notifications();
                 case 2:

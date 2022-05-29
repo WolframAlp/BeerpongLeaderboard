@@ -2,6 +2,7 @@ import 'package:beerpong_leaderboard/screens/buttom_navigation.dart';
 import 'package:beerpong_leaderboard/screens/profile/profile_head.dart';
 import 'package:beerpong_leaderboard/screens/profile/trophys.dart';
 import 'package:beerpong_leaderboard/services/database.dart';
+import 'package:beerpong_leaderboard/services/page_manager.dart';
 import 'package:beerpong_leaderboard/utilities/trophy.dart';
 import 'package:beerpong_leaderboard/utilities/user.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -19,25 +20,26 @@ class _ProfileState extends State<Profile> {
   @override
   Widget build(BuildContext context) {
     User? firebaseUser = Provider.of<User?>(context);
-    return StreamProvider<TrophyModel>.value(
-      initialData: TrophyModel(),
-      value: DatabaseService(
-                uid: firebaseUser?.uid, name: firebaseUser?.displayName)
-            .trophys,
-      child: StreamProvider<UserModel>.value(
-        value: DatabaseService(
-                uid: firebaseUser?.uid, name: firebaseUser?.displayName)
-            .userData,
-        initialData: context.read<LastUserLoad>().lastLoad,
-        child: Scaffold(
-          bottomNavigationBar: getCostumNavigationBar(context, 4),
-          backgroundColor: const Color(0xFF6CA8F1),
-          body: Column(
-            children: const <Widget>[
-              ProfileHead(),
-              SizedBox(height: 40.0,),
-              TrophyHead(),
-            ],
+    return WillPopScope(
+      onWillPop: () async {context.read<PageManager>().goBackOneScreen(); return false;},
+      child: StreamProvider<TrophyModel>.value(
+        initialData: context.read<LastTrophyLoad>().lastLoad,
+        value: context.read<DatabaseService>().trophys,
+        child: StreamProvider<UserModel>.value(
+          value: context.read<DatabaseService>().userData,
+          initialData: context.read<LastUserLoad>().lastLoad,
+          child: Scaffold(
+            bottomNavigationBar: getCostumNavigationBar(context, 4),
+            backgroundColor: const Color(0xFF6CA8F1),
+            body: Column(
+              children: const <Widget>[
+                ProfileHead(),
+                SizedBox(
+                  height: 40.0,
+                ),
+                TrophyHead(),
+              ],
+            ),
           ),
         ),
       ),
