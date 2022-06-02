@@ -2,6 +2,7 @@ import 'package:beerpong_leaderboard/screens/wrapper.dart';
 import 'package:beerpong_leaderboard/services/auth.dart';
 import 'package:beerpong_leaderboard/services/database.dart';
 import 'package:beerpong_leaderboard/services/page_manager.dart';
+import 'package:beerpong_leaderboard/services/storage.dart';
 import 'package:beerpong_leaderboard/utilities/leaderboard.dart';
 import 'package:beerpong_leaderboard/utilities/trophy.dart';
 import 'package:beerpong_leaderboard/utilities/user.dart';
@@ -14,16 +15,14 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   runApp(
-    MultiProvider(
-    providers: [
+    MultiProvider(providers: [
       ChangeNotifierProvider(create: (context) => PageManager()),
       ChangeNotifierProvider(create: (context) => LastUserLoad()),
       ChangeNotifierProvider(create: (context) => LastTrophyLoad()),
       ChangeNotifierProvider(create: (context) => LastLeaderboardLoad()),
-      ChangeNotifierProvider(create: (context) => DatabaseService())
-    ],
-    child: const MyApp()
-    ),
+      ChangeNotifierProvider(create: (context) => DatabaseService()),
+      ChangeNotifierProvider(create: (context) => StorageService()),
+    ], child: const MyApp()),
   );
 }
 

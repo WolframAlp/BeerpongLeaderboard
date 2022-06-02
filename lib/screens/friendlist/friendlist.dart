@@ -50,6 +50,11 @@ class FriendList extends StatelessWidget {
     return Container();
   }
 
+  // make three tabs
+  // Friends who are in the friends folder, tile should have : picture, name, elo, number of games
+  // requests which are in the requests folder, tile should have : accept or remove as well as name, picture and elo
+  // add friends, which has a search bar and add button
+
   @override
   Widget build(BuildContext context) {
     UserModel user = context.read<LastUserLoad>().lastLoad;
@@ -67,9 +72,7 @@ class FriendList extends StatelessWidget {
         elevation: 0.0,
         actions: <Widget>[
           TextButton.icon(
-              onPressed: () async {
-                await _auth.signOut();
-                Navigator.pop(context);
+              onPressed: () {
               },
               icon: const Icon(Icons.person_add_alt),
               label: const Text("Add")),

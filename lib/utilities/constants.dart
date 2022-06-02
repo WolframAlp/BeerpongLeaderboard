@@ -87,6 +87,48 @@ const pageDecoration = PageDecoration(
 final introKey = GlobalKey<IntroductionScreenState>();
 
 //*****************************************
+// ButtonStyles
+//*****************************************
+
+// Button style for accept button in notifications
+ButtonStyle acceptButtonStyle = ButtonStyle(
+                              backgroundColor:
+                                  MaterialStateProperty.resolveWith<Color?>(
+                                      (Set<MaterialState> states) {
+                                if (states.contains(MaterialState.pressed)) {
+                                  return Colors.lightGreen[300];
+                                } else {
+                                  return Colors.lightGreen[600];
+                                }
+                              }),
+                              elevation: MaterialStateProperty.resolveWith<double?>((Set<MaterialState> states){
+                                if (states.contains(MaterialState.pressed)){
+                                  return 0.0;
+                                } else {
+                                  return 5.0;
+                                }
+                              }));
+
+// Button style for decline button in notifications
+ButtonStyle declineButtonStyle = ButtonStyle(
+                              backgroundColor:
+                                  MaterialStateProperty.resolveWith<Color?>(
+                                      (Set<MaterialState> states) {
+                                if (states.contains(MaterialState.pressed)) {
+                                  return Color.fromARGB(255, 187, 142, 124);
+                                } else {
+                                  return Color.fromARGB(255, 209, 187, 173);
+                                }
+                              }),
+                              elevation: MaterialStateProperty.resolveWith<double?>((Set<MaterialState> states){
+                                if (states.contains(MaterialState.pressed)){
+                                  return 0.0;
+                                } else {
+                                  return 2.0;
+                                }
+                              }));
+
+//*****************************************
 // Functions
 //*****************************************
 

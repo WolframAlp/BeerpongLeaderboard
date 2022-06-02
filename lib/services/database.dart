@@ -28,6 +28,10 @@ class DatabaseService with ChangeNotifier, DiagnosticableTreeMixin {
       'games': 0,
       'elo': 1000,
       'friends': [],
+      'friendRequests' : [],
+      'sendRequests' : [],
+      'avatarUrl' : "",
+      'notifications' : [],
     }, SetOptions(merge: true));
   }
 
@@ -74,6 +78,29 @@ class DatabaseService with ChangeNotifier, DiagnosticableTreeMixin {
     });
   }
 
+  // send a friend request and add request to own list of send requests
+  Future sendFriendRequest(String otherUser) async {
+    await userCollection.doc(otherUser).update({"friendRequests": FieldValue.arrayUnion([name])});
+    await userCollection.doc(otherUser).update({"notifications": FieldValue.arrayUnion([{"type": "friendRequest", "name": name, "time": FieldValue.serverTimestamp()}])});
+    return await userCollection.doc(name).update({"sendRequests": FieldValue.arrayUnion([otherUser])});
+  }
+
+  // accept a friend request
+  Future acceptFriendRequest(String otherUser) async {
+    // make user references
+    DocumentReference otherUserDoc = userCollection.doc(otherUser);
+    DocumentReference thisUser = userCollection.doc(name);
+
+    // edit other user
+    await otherUserDoc.update({"sendRequests": FieldValue.arrayRemove([name])});
+    await otherUserDoc.update({"friends": FieldValue.arrayUnion([name])});
+    await otherUserDoc.update({"notifications": FieldValue.arrayUnion([{"type": "friendRequestAccepted", "name": name, "time": FieldValue.serverTimestamp()}])});
+
+    // edit this user
+    await thisUser.update({"friendRequests": FieldValue.arrayRemove([name])});
+    return await thisUser.update({"friends": FieldValue.arrayUnion([name])});
+  }
+
   // Gets the documents for the top ten players on the leaderboard : https://cloud.google.com/firestore/docs/query-data/order-limit-data
   Future getTopTenPlayers() async {
     return leaderboardCollection
@@ -108,6 +135,11 @@ class DatabaseService with ChangeNotifier, DiagnosticableTreeMixin {
   // TODO what happens when offline ??, will information be updated later or never? what if you accept a game, is your elo updated, or do you need to accept it again later?
 
   // TODO for offline users it might be usefull to use the cache option : https://firebase.google.com/docs/firestore/query-data/get-data#source_options
+
+
+  Future setImageURL(String? imageURL) async {
+    return userCollection.doc(name).update({"avatarUrl" : imageURL});
+  }
 
   List<Map> _getLeaderboardMapList(QuerySnapshot snapshot) {
     List<Map> leaderboardMapList = [];
@@ -145,6 +177,10 @@ class DatabaseService with ChangeNotifier, DiagnosticableTreeMixin {
       name: snapshot.get('name'),
       elo: snapshot.get('elo'),
       friends: snapshot.get('friends'),
+      friendRequests: snapshot.get('friendRequests'),
+      sendRequests: snapshot.get('sendRequests'),
+      avatarUrl: snapshot.get('avatarUrl'),
+      notifications: snapshot.get('notifications'),
     );
   }
 
@@ -158,6 +194,10 @@ class DatabaseService with ChangeNotifier, DiagnosticableTreeMixin {
         name: doc.get('name'),
         elo: doc.get('elo'),
         friends: doc.get('friends'),
+        friendRequests: doc.get('friendRequests'),
+        sendRequests: doc.get('sendRequests'),
+        avatarUrl: doc.get('avatarUrl'),
+        notifications: doc.get('notifications'),
       );
     }).toList();
   }

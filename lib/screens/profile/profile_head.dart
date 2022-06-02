@@ -1,10 +1,15 @@
+import 'dart:io';
+
 import 'package:beerpong_leaderboard/screens/friendlist/friendlist.dart';
 import 'package:beerpong_leaderboard/screens/settings/settings.dart';
+import 'package:beerpong_leaderboard/services/database.dart';
+import 'package:beerpong_leaderboard/services/storage.dart';
 import 'package:beerpong_leaderboard/utilities/user.dart';
 import 'package:beerpong_leaderboard/utilities/constants.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_profile_picture/flutter_profile_picture.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
+import 'package:avatars/avatars.dart';
 
 class ProfileHead extends StatefulWidget {
   const ProfileHead({Key? key}) : super(key: key);
@@ -15,6 +20,7 @@ class ProfileHead extends StatefulWidget {
 
 class _ProfileHeadState extends State<ProfileHead> {
   double iconSize = 32;
+  List<Source> pictureSource = [];
 
   Column getLeftColumn(UserModel user) {
     return Column(
@@ -80,15 +86,39 @@ class _ProfileHeadState extends State<ProfileHead> {
     );
   }
 
-  Column getCenterColumn(UserModel user) {
+  Column getCenterColumn(UserModel user, BuildContext context) {
+    if (context.read<StorageService>().image != null) {
+      pictureSource = [GenericSource(context.read<StorageService>().image!.image)];
+    } else if (user.avatarUrl.isNotEmpty){
+      context.read<StorageService>().getUserImage(user.avatarUrl);
+      pictureSource = [GenericSource(context.read<StorageService>().image!.image)];
+    }
     return Column(
       mainAxisAlignment: MainAxisAlignment.spaceAround,
       children: [
         const SizedBox(height: 10.0),
-        ProfilePicture(
+        Avatar(
+          sources: pictureSource,
           name: user.name.toString(),
-          radius: 55.0,
-          fontsize: 30.0,
+          textStyle: const TextStyle(fontSize: 30.0),
+          shape: AvatarShape.circle(55.0),
+          useCache: true,
+          onTap: () async {
+            XFile? imagePicked = await ImagePicker().pickImage(source: ImageSource.gallery);
+            if (imagePicked != null){
+              File imageFile = File(imagePicked.path);
+              String? imageURL = await context.read<StorageService>().uploadImage(imageFile);
+              if (imageURL != null){
+                await context.read<DatabaseService>().setImageURL(imageURL);
+                context.read<UserModel>().avatarUrl = imageURL;
+              }
+            setState(() {
+              pictureSource = [GenericSource(context.read<StorageService>().image!.image)];
+            });
+            }
+          },
+          // TODO open tab with "view" or "edit" when profile picture exists
+
         ),
         const SizedBox(height: 45.0),
         const Text(
@@ -187,7 +217,7 @@ class _ProfileHeadState extends State<ProfileHead> {
           flex: 4,
         ),
         Expanded(
-          child: getCenterColumn(user),
+          child: getCenterColumn(user, context),
           flex: 4,
         ),
         Expanded(
