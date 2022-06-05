@@ -54,6 +54,8 @@ class _LeaderboardListState extends State<LeaderboardList> {
   }
 }
 
+// TODO set up with profile picture like in notifications+++++++
+
 class LeaderboardTile extends StatelessWidget {
   final Map user;
   final int index;

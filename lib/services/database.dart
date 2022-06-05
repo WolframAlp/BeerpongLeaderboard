@@ -19,6 +19,13 @@ class DatabaseService with ChangeNotifier, DiagnosticableTreeMixin {
   final CollectionReference leaderboardCollection =
       FirebaseFirestore.instance.collection('leaderboard');
 
+  // Create all the required database entries for new user
+  Future createAllNewUser() async {
+    createNewUser();
+    createtrophyUser();
+    createrUserOnLeaderboard();
+  }
+
   // Create new user in database
   Future createNewUser() async {
     return await userCollection.doc(name).set({
@@ -110,6 +117,28 @@ class DatabaseService with ChangeNotifier, DiagnosticableTreeMixin {
         .map(_getLeaderboardMapList);
   }
 
+  // Get a set of user profile urls
+  Future getListOfAvatarUrlsFromNames(List<String> usernames) async {
+
+    // TODO currently loads the entire profile for each person. Probably not the way to go...
+    Map<String,String> userProfiles = _getUrlFromProfile(await userCollection.where(FieldPath.documentId, whereIn: usernames).get());
+    List<String> userUrls = [];
+    for (var name in usernames){
+      userUrls.add(userProfiles[name]!);
+    }
+    return userUrls;
+  }
+
+  // Get a mapping of names to urls from a snapshot of documents
+  Map<String,String> _getUrlFromProfile(QuerySnapshot snapshot){
+    List<QueryDocumentSnapshot> documents = snapshot.docs;
+    Map<String,String> userUrls = {};
+    for (var doc in documents){
+      userUrls[doc.id] = doc.get("avatarUrl");
+    }
+    return userUrls;
+  }
+
   // All users list data stream
   Stream<List<UserModel>> get users {
     return userCollection.snapshots().map(_usersFromSnapshot);
@@ -127,7 +156,7 @@ class DatabaseService with ChangeNotifier, DiagnosticableTreeMixin {
 
   // Top ten leaderboard stream
   Stream<List<Map>> get topTen {
-    return leaderboardCollection.orderBy("elo").limit(10).snapshots().map(_getLeaderboardMapList);
+    return leaderboardCollection.orderBy("elo", descending: true).limit(10).snapshots().map(_getLeaderboardMapList);
   }
 
   // TODO mapping in the streams could be done automatically from snapshots using the firebase build in costum objects methods : https://firebase.google.com/docs/firestore/manage-data/add-data#custom_objects

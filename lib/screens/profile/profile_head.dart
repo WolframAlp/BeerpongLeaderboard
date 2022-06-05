@@ -86,12 +86,37 @@ class _ProfileHeadState extends State<ProfileHead> {
     );
   }
 
+  // goes through the process of selecting and uploading a new profile picture
+  Future _pickNewProfilePicture() async {
+    XFile? imagePicked =
+        await ImagePicker().pickImage(source: ImageSource.gallery);
+    if (imagePicked != null) {
+      File imageFile = File(imagePicked.path);
+      String? imageURL =
+          await context.read<StorageService>().uploadImage(imageFile);
+      if (imageURL != null) {
+        await context.read<DatabaseService>().setImageURL(imageURL);
+        context.read<UserModel>().avatarUrl = imageURL;
+      }
+      setState(() {
+        pictureSource = [
+          GenericSource(context.read<StorageService>().image!.image)
+        ];
+      });
+      Navigator.pop(context);
+    }
+  }
+
   Column getCenterColumn(UserModel user, BuildContext context) {
     if (context.read<StorageService>().image != null) {
-      pictureSource = [GenericSource(context.read<StorageService>().image!.image)];
-    } else if (user.avatarUrl.isNotEmpty){
+      pictureSource = [
+        GenericSource(context.read<StorageService>().image!.image)
+      ];
+    } else if (user.avatarUrl.isNotEmpty) {
       context.read<StorageService>().getUserImage(user.avatarUrl);
-      pictureSource = [GenericSource(context.read<StorageService>().image!.image)];
+      pictureSource = [
+        GenericSource(context.read<StorageService>().image!.image)
+      ];
     }
     return Column(
       mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -103,22 +128,33 @@ class _ProfileHeadState extends State<ProfileHead> {
           textStyle: const TextStyle(fontSize: 30.0),
           shape: AvatarShape.circle(55.0),
           useCache: true,
-          onTap: () async {
-            XFile? imagePicked = await ImagePicker().pickImage(source: ImageSource.gallery);
-            if (imagePicked != null){
-              File imageFile = File(imagePicked.path);
-              String? imageURL = await context.read<StorageService>().uploadImage(imageFile);
-              if (imageURL != null){
-                await context.read<DatabaseService>().setImageURL(imageURL);
-                context.read<UserModel>().avatarUrl = imageURL;
-              }
-            setState(() {
-              pictureSource = [GenericSource(context.read<StorageService>().image!.image)];
-            });
-            }
+          onTap: () {
+            showModalBottomSheet<void>(
+                backgroundColor: Colors.lightBlueAccent,
+                context: context,
+                builder: (BuildContext context) {
+                  return SizedBox(
+                    height: 80.0,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        TextButton.icon(
+                          onPressed: () async {
+                            await _pickNewProfilePicture();
+                          },
+                          icon: const Icon(
+                            Icons.image,
+                            color: Colors.amberAccent,
+                          ),
+                          label: const Text("Pick new picture from gallery",
+                              style: kLabelStyle),
+                        ),
+                      ],
+                    ),
+                  );
+                });
           },
-          // TODO open tab with "view" or "edit" when profile picture exists
-
         ),
         const SizedBox(height: 45.0),
         const Text(

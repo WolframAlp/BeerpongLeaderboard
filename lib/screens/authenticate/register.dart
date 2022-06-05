@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:beerpong_leaderboard/utilities/loading.dart';
 import 'package:beerpong_leaderboard/utilities/constants.dart';
+import 'package:provider/provider.dart';
 
 class RegisterScreen extends StatefulWidget {
   @override
@@ -11,7 +12,6 @@ class RegisterScreen extends StatefulWidget {
 
 class _RegisterScreenState extends State<RegisterScreen> {
 
-  final AuthService _auth = AuthService();
   final _formKey = GlobalKey<FormState>();
 
   bool loading = false;
@@ -109,7 +109,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
           onPressed: () async {
             if (_formKey.currentState!.validate()) {
               setState(() => loading = true);
-              dynamic result = await _auth.registerEmail(email, password);
+              dynamic result = await context.read<AuthService>().registerEmail(email, password);
               if (result == null) {
                 setState(() {
                   error = "Please supply valid email";

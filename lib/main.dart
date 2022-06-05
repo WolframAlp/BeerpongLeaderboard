@@ -22,6 +22,7 @@ void main() async {
       ChangeNotifierProvider(create: (context) => LastLeaderboardLoad()),
       ChangeNotifierProvider(create: (context) => DatabaseService()),
       ChangeNotifierProvider(create: (context) => StorageService()),
+      ChangeNotifierProvider(create: (context) => AuthService())
     ], child: const MyApp()),
   );
 }
@@ -33,7 +34,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return StreamProvider<User?>.value(
-      value: AuthService().user,
+      value: context.read<AuthService>().user,
       initialData: null,
       child: MaterialApp(
         theme: ThemeData(primarySwatch: Colors.blue),
