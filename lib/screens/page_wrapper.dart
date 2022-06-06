@@ -1,14 +1,11 @@
-import 'package:beerpong_leaderboard/screens/home/home.dart';
 import 'package:beerpong_leaderboard/screens/intro/intro_wrapper.dart';
 import 'package:beerpong_leaderboard/screens/intro/set_username.dart';
 import 'package:beerpong_leaderboard/screens/leaderboard/leaderboard.dart';
 import 'package:beerpong_leaderboard/screens/notifications/notifications.dart';
 import 'package:beerpong_leaderboard/screens/profile/profile.dart';
+import 'package:beerpong_leaderboard/screens/registration/registration.dart';
 import 'package:beerpong_leaderboard/screens/rules/rules.dart';
 import 'package:beerpong_leaderboard/services/auth.dart';
-import 'package:beerpong_leaderboard/services/database.dart';
-import 'package:beerpong_leaderboard/utilities/loading.dart';
-import 'package:beerpong_leaderboard/utilities/user.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:beerpong_leaderboard/services/page_manager.dart';
@@ -33,15 +30,7 @@ class PageWrapper extends StatelessWidget {
           case 1:
             return const Notifications();
           case 2:
-            return StreamBuilder<List<UserModel>>(
-                stream: context.read<DatabaseService>().users,
-                builder: (context, snapshot) {
-                  if (snapshot.hasData) {
-                    return Home(); // registration
-                  } else {
-                    return LoadingIcon();
-                  }
-                });
+            return Registration();
           case 3:
             return const Rules();
           case 4:
@@ -51,7 +40,7 @@ class PageWrapper extends StatelessWidget {
           case 6:
             return const OnBoardingPage();
         }
-        return Home();
+        return Registration();
       },
     );
   }
