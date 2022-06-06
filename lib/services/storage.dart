@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
+import 'package:provider/provider.dart';
 
 class StorageService with ChangeNotifier, DiagnosticableTreeMixin {
   FirebaseStorage storage = FirebaseStorage.instance;
@@ -11,7 +12,7 @@ class StorageService with ChangeNotifier, DiagnosticableTreeMixin {
   Image? image;
   String? userUrl;
   StorageService({this.name});
-  Map<String,Image> cachedImages = {};
+  Map<String, Image> cachedImages = {};
 
   Future<String?> uploadImage(File file) async {
     var storageReference = storage.ref().child("user/profile/$name");
@@ -20,20 +21,35 @@ class StorageService with ChangeNotifier, DiagnosticableTreeMixin {
   }
 
   Future<Image> getUserImage(String url) async {
-    if (image == null || url != userUrl){
+    if (image == null || url != userUrl) {
       userUrl = url;
       image = Image.network(url);
     }
     return image!;
   }
 
-  Future<Image> getImageFromUsername(String username) async {
-    if (cachedImages.keys.contains(username)){
+  Future<String> _getUrlFromUsername(
+      String username, BuildContext context) async {
+    if (context
+        .read<DatabaseService>()
+        .collectedUserUrls
+        .containsKey(username)) {
+      return context.read<DatabaseService>().collectedUserUrls[username]!;
+    } else {
+      DocumentSnapshot userData =
+          await DatabaseService().userCollection.doc(username).get();
+      return userData.get("avatarUrl");
+    }
+  }
+
+  Future<Image> getImageFromUsername(
+      String username, BuildContext context) async {
+    if (cachedImages.keys.contains(username)) {
       return cachedImages[username]!;
     }
-    DocumentSnapshot userData =
-        await DatabaseService().userCollection.doc(username).get();
-    String url = userData.get("avatarUrl");
+
+    String url = await _getUrlFromUsername(username, context);
+
     if (url.isNotEmpty) {
       Image loadedImage = Image.network(url);
       cachedImages[username] = loadedImage;

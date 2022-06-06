@@ -22,14 +22,6 @@ class Notifications extends StatelessWidget {
         value: context.read<DatabaseService>().userData,
         child: Scaffold(
           bottomNavigationBar: getCostumNavigationBar(context, 1),
-          // appBar: AppBar(
-          //   backgroundColor: Colors.blue[300],
-          //   title: const Text(
-          //     "The Notifications",
-          //     style: kHintTextStyle,
-          //   ),
-          //   elevation: 0.0,
-          // ),
           backgroundColor: Colors.blueAccent,
           body: NotificationList(),
         ),

@@ -7,22 +7,6 @@ import 'package:provider/provider.dart';
 import 'package:beerpong_leaderboard/utilities/user.dart';
 import 'package:beerpong_leaderboard/utilities/constants.dart';
 
-getLoadingFields(List notifications){
-  return ListView.builder(
-            itemCount: notifications.length,
-            itemBuilder: (context, index) {
-              return Padding(
-                  padding: const EdgeInsets.only(top: 8.0),
-                  child: Card(
-                      margin: const EdgeInsets.fromLTRB(8.0, 4.0, 8.0, 0.0),
-                      child: LoadingIcon(
-                        size: 30.0,
-                      )));
-            },
-          );
-}
-
-
 class NotificationList extends StatefulWidget {
   const NotificationList({Key? key}) : super(key: key);
 
@@ -32,7 +16,7 @@ class NotificationList extends StatefulWidget {
 
 class _NotificationListState extends State<NotificationList> {
   // gets a list of the profile urls from usernames
-  Future<List<String>> _getOtherUsersUrls(
+  Future<Map<String,String>> _getOtherUsersUrls(
       List<String> usernames, BuildContext context) async {
     return await context
         .read<DatabaseService>()
@@ -52,10 +36,10 @@ class _NotificationListState extends State<NotificationList> {
       otherUsers.add(v["name"]);
     }
 
-    return FutureBuilder<List<String>>(
+    return FutureBuilder<Map<String,String>>(
       // future in this case is a list of urls from all the users profile pictures
       future: _getOtherUsersUrls(otherUsers, context),
-      builder: (BuildContext context, AsyncSnapshot<List<String>> snapshot) {
+      builder: (BuildContext context, AsyncSnapshot<Map<String,String>> snapshot) {
         // Has data returns the list builder
         if (snapshot.hasData) {
           return ListView.builder(
@@ -63,16 +47,15 @@ class _NotificationListState extends State<NotificationList> {
             itemBuilder: (context, index) {
               return NotificationTile(
                   notification: notifications[notifications.length - index - 1],
-                  url: snapshot.data![notifications.length - index - 1]);
+                  url: snapshot.data![notifications[notifications.length - index - 1]['name']]!);
             },
           );
         } else if (snapshot.hasError) {
-          return getLoadingFields(notifications);
-          // return const Center(
-          //     child: Icon(Icons.error_outline, color: Colors.red, size: 100.0));
+          // error returns a container with a loading screen
+          return getLoadingFields(notifications, 60.0, 10.0, MediaQuery.of(context).size.height);
         } else {
           // no data returns a container with a loading screen
-          return getLoadingFields(notifications);
+          return getLoadingFields(notifications, 60.0, 10.0, MediaQuery.of(context).size.height);
         }
       },
     );
@@ -101,7 +84,7 @@ class NotificationTile extends StatelessWidget {
             Avatar(shape: AvatarShape.circle(30.0), useCache: true, sources: [
               GenericSource((await context
                       .read<StorageService>()
-                      .getImageFromUsername(notification["name"]))
+                      .getImageFromUsername(notification["name"], context))
                   .image)
             ]),
             Column(
@@ -158,7 +141,7 @@ class NotificationTile extends StatelessWidget {
             Avatar(shape: AvatarShape.circle(30.0), useCache: true, sources: [
               GenericSource((await context
                       .read<StorageService>()
-                      .getImageFromUsername(notification["name"]))
+                      .getImageFromUsername(notification["name"], context))
                   .image)
             ]),
             Column(
@@ -215,12 +198,14 @@ class NotificationTile extends StatelessWidget {
                   color: Colors.red, size: 30.0);
             } else {
               return Padding(
-                  padding: const EdgeInsets.only(top: 8.0),
-                  child: Card(
-                      margin: const EdgeInsets.fromLTRB(8.0, 4.0, 8.0, 0.0),
-                      child: LoadingIcon(
-                        size: 30.0,
-                      )));
+                padding: const EdgeInsets.only(top: 8.0),
+                child: Card(
+                  margin: const EdgeInsets.fromLTRB(8.0, 4.0, 8.0, 0.0),
+                  child: LoadingIcon(
+                    size: 30.0,
+                  ),
+                ),
+              );
             }
           },
         ),

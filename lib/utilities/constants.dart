@@ -1,4 +1,5 @@
 import 'package:beerpong_leaderboard/services/page_manager.dart';
+import 'package:beerpong_leaderboard/utilities/loading.dart';
 import 'package:flutter/material.dart';
 import 'package:introduction_screen/introduction_screen.dart';
 import 'package:provider/provider.dart';
@@ -170,4 +171,25 @@ void onTappedNavigation(BuildContext context, int newIndex, int currIndex) {
       context.read<PageManager>().goToProfile();
       break;
   }
+}
+
+getLoadingFields(List tiles, double height, double size, double containerHeight) {
+  return SizedBox(
+    height: containerHeight,
+    child: ListView.builder(
+      itemCount: tiles.length,
+      itemBuilder: (context, index) {
+        return Padding(
+            padding: const EdgeInsets.only(top: 8.0),
+            child: Card(
+                margin: const EdgeInsets.fromLTRB(8.0, 4.0, 8.0, 0.0),
+                child: SizedBox(
+                  height: height,
+                  child: LoadingIcon(
+                    size: size,
+                  ),
+                )));
+      },
+    ),
+  );
 }

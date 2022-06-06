@@ -6,6 +6,7 @@ import 'package:flutter/foundation.dart';
 class DatabaseService with ChangeNotifier, DiagnosticableTreeMixin {
   String? uid;
   String? name;
+  Map<String, String?> collectedUserUrls = {};
   DatabaseService({this.uid, this.name});
 
   // user collection
@@ -35,10 +36,10 @@ class DatabaseService with ChangeNotifier, DiagnosticableTreeMixin {
       'games': 0,
       'elo': 1000,
       'friends': [],
-      'friendRequests' : [],
-      'sendRequests' : [],
-      'avatarUrl' : "",
-      'notifications' : [],
+      'friendRequests': [],
+      'sendRequests': [],
+      'avatarUrl': "",
+      'notifications': [],
     }, SetOptions(merge: true));
   }
 
@@ -87,9 +88,21 @@ class DatabaseService with ChangeNotifier, DiagnosticableTreeMixin {
 
   // send a friend request and add request to own list of send requests
   Future sendFriendRequest(String otherUser) async {
-    await userCollection.doc(otherUser).update({"friendRequests": FieldValue.arrayUnion([name])});
-    await userCollection.doc(otherUser).update({"notifications": FieldValue.arrayUnion([{"type": "friendRequest", "name": name, "time": FieldValue.serverTimestamp()}])});
-    return await userCollection.doc(name).update({"sendRequests": FieldValue.arrayUnion([otherUser])});
+    await userCollection.doc(otherUser).update({
+      "friendRequests": FieldValue.arrayUnion([name])
+    });
+    await userCollection.doc(otherUser).update({
+      "notifications": FieldValue.arrayUnion([
+        {
+          "type": "friendRequest",
+          "name": name,
+          "time": FieldValue.serverTimestamp()
+        }
+      ])
+    });
+    return await userCollection.doc(name).update({
+      "sendRequests": FieldValue.arrayUnion([otherUser])
+    });
   }
 
   // accept a friend request
@@ -99,13 +112,29 @@ class DatabaseService with ChangeNotifier, DiagnosticableTreeMixin {
     DocumentReference thisUser = userCollection.doc(name);
 
     // edit other user
-    await otherUserDoc.update({"sendRequests": FieldValue.arrayRemove([name])});
-    await otherUserDoc.update({"friends": FieldValue.arrayUnion([name])});
-    await otherUserDoc.update({"notifications": FieldValue.arrayUnion([{"type": "friendRequestAccepted", "name": name, "time": FieldValue.serverTimestamp()}])});
+    await otherUserDoc.update({
+      "sendRequests": FieldValue.arrayRemove([name])
+    });
+    await otherUserDoc.update({
+      "friends": FieldValue.arrayUnion([name])
+    });
+    await otherUserDoc.update({
+      "notifications": FieldValue.arrayUnion([
+        {
+          "type": "friendRequestAccepted",
+          "name": name,
+          "time": FieldValue.serverTimestamp()
+        }
+      ])
+    });
 
     // edit this user
-    await thisUser.update({"friendRequests": FieldValue.arrayRemove([name])});
-    return await thisUser.update({"friends": FieldValue.arrayUnion([name])});
+    await thisUser.update({
+      "friendRequests": FieldValue.arrayRemove([name])
+    });
+    return await thisUser.update({
+      "friends": FieldValue.arrayUnion([name])
+    });
   }
 
   // Gets the documents for the top ten players on the leaderboard : https://cloud.google.com/firestore/docs/query-data/order-limit-data
@@ -119,21 +148,44 @@ class DatabaseService with ChangeNotifier, DiagnosticableTreeMixin {
 
   // Get a set of user profile urls
   Future getListOfAvatarUrlsFromNames(List<String> usernames) async {
+    Map<String, String> userUrls = {};
+    List<String> toRemove = [];
 
-    // TODO currently loads the entire profile for each person. Probably not the way to go...
-    Map<String,String> userProfiles = _getUrlFromProfile(await userCollection.where(FieldPath.documentId, whereIn: usernames).get());
-    List<String> userUrls = [];
-    for (var name in usernames){
-      userUrls.add(userProfiles[name]!);
+    // check if urls are already collected
+    for (var name in usernames) {
+      if (collectedUserUrls.containsKey(name)) {
+        userUrls[name] = collectedUserUrls[name]!;
+        toRemove.add(name);
+      }
     }
+    
+    // remove all the names of urls already collected
+    for (var name in toRemove) {
+      usernames.remove(name);
+    }
+
+    // check if any are left to download then get them if neccessary
+    if (usernames.isNotEmpty) {
+      Map<String, String> userProfiles = _getUrlFromProfile(await userCollection
+          .where(FieldPath.documentId, whereIn: usernames)
+          .get());
+      for (var name in usernames) {
+        userUrls[name] = userProfiles[name]!;
+        if (!collectedUserUrls.keys.contains(name)) {
+          collectedUserUrls[name] = userProfiles[name];
+        }
+      }
+    }
+
+    // return the map of urls
     return userUrls;
   }
 
   // Get a mapping of names to urls from a snapshot of documents
-  Map<String,String> _getUrlFromProfile(QuerySnapshot snapshot){
+  Map<String, String> _getUrlFromProfile(QuerySnapshot snapshot) {
     List<QueryDocumentSnapshot> documents = snapshot.docs;
-    Map<String,String> userUrls = {};
-    for (var doc in documents){
+    Map<String, String> userUrls = {};
+    for (var doc in documents) {
       userUrls[doc.id] = doc.get("avatarUrl");
     }
     return userUrls;
@@ -156,7 +208,11 @@ class DatabaseService with ChangeNotifier, DiagnosticableTreeMixin {
 
   // Top ten leaderboard stream
   Stream<List<Map>> get topTen {
-    return leaderboardCollection.orderBy("elo", descending: true).limit(10).snapshots().map(_getLeaderboardMapList);
+    return leaderboardCollection
+        .orderBy("elo", descending: true)
+        .limit(10)
+        .snapshots()
+        .map(_getLeaderboardMapList);
   }
 
   // TODO mapping in the streams could be done automatically from snapshots using the firebase build in costum objects methods : https://firebase.google.com/docs/firestore/manage-data/add-data#custom_objects
@@ -165,9 +221,8 @@ class DatabaseService with ChangeNotifier, DiagnosticableTreeMixin {
 
   // TODO for offline users it might be usefull to use the cache option : https://firebase.google.com/docs/firestore/query-data/get-data#source_options
 
-
   Future setImageURL(String? imageURL) async {
-    return userCollection.doc(name).update({"avatarUrl" : imageURL});
+    return userCollection.doc(name).update({"avatarUrl": imageURL});
   }
 
   List<Map> _getLeaderboardMapList(QuerySnapshot snapshot) {
