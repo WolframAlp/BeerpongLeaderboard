@@ -107,11 +107,6 @@ class _SetUsernameState extends State<SetUsername> {
                 context.read<AuthService>().firstTimeLogin = false;
                 await user?.updateDisplayName(username);
                 await user?.reload();
-                // setState(()=> loading = false);
-                // print("");
-                // print("Got all the way through");
-                // print("${user?.displayName}");
-                // print("");
               }
             } else {
               error = '';

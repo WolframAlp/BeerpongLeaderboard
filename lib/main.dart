@@ -1,3 +1,4 @@
+import 'package:beerpong_leaderboard/screens/friendlist/inputTextManager.dart';
 import 'package:beerpong_leaderboard/screens/wrapper.dart';
 import 'package:beerpong_leaderboard/services/auth.dart';
 import 'package:beerpong_leaderboard/services/database.dart';
@@ -22,7 +23,8 @@ void main() async {
       ChangeNotifierProvider(create: (context) => LastLeaderboardLoad()),
       ChangeNotifierProvider(create: (context) => DatabaseService()),
       ChangeNotifierProvider(create: (context) => StorageService()),
-      ChangeNotifierProvider(create: (context) => AuthService())
+      ChangeNotifierProvider(create: (context) => AuthService()),
+      ChangeNotifierProvider(create: (context) => AddFriendTextManager(),)
     ], child: const MyApp()),
   );
 }

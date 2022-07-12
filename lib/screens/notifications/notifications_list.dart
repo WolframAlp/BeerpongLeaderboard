@@ -7,6 +7,10 @@ import 'package:provider/provider.dart';
 import 'package:beerpong_leaderboard/utilities/user.dart';
 import 'package:beerpong_leaderboard/utilities/constants.dart';
 
+
+// TODO have local list of tiles which can be updated seperately from server in case of bad connection
+
+
 class NotificationList extends StatefulWidget {
   const NotificationList({Key? key}) : super(key: key);
 

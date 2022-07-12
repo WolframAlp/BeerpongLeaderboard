@@ -4,6 +4,7 @@
 
 // friend suggestions??
 
+import 'package:beerpong_leaderboard/screens/friendlist/add_friend.dart';
 import 'package:beerpong_leaderboard/utilities/constants.dart';
 import 'package:beerpong_leaderboard/utilities/user.dart';
 import 'package:flutter/material.dart';
@@ -73,6 +74,8 @@ class FriendList extends StatelessWidget {
         actions: <Widget>[
           TextButton.icon(
               onPressed: () {
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => AddFriendScreen()));
               },
               icon: const Icon(Icons.person_add_alt),
               label: const Text("Add")),

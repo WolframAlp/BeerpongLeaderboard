@@ -268,6 +268,14 @@ class DatabaseService with ChangeNotifier, DiagnosticableTreeMixin {
     );
   }
 
+  // list of all usernames
+  Future<List<String>> getAllUsernames() async {
+    QuerySnapshot snapshot = await userCollection.get();
+    List<String> names = [];
+    snapshot.docs.forEach((element) {names.add(element.id);});
+    return names;
+  }
+
   // user list from snapshot
   List<UserModel> _usersFromSnapshot(QuerySnapshot snapshot) {
     return snapshot.docs.map((doc) {

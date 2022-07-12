@@ -177,6 +177,8 @@ class _ProfileHeadState extends State<ProfileHead> {
     }
   }
 
+// TODO add username to page?
+
   Column getRightColumn(UserModel user) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
