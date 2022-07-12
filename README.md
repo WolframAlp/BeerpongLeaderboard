@@ -23,3 +23,6 @@ TODO
 -Login with facebook support
 -More trophiese
     -A system for archieving trophies which does not require all trophese to be checked all the time
+-Add a "seen" property to notifications
+    -Change color or not appear based on the seen property
+-Rearange information so when downloading users not all their friends and tokens and shit comes along

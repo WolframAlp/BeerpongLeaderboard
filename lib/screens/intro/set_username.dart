@@ -71,6 +71,8 @@ class _SetUsernameState extends State<SetUsername> {
     }
     if (username.length < 6) {
       return "Username too short (min 6 char)";
+    } else if (username.length > 16){
+      return "Username too long (max 16 char)";
     } else if (username.contains('@') ||
         username.contains('%') ||
         username.contains('?')) {

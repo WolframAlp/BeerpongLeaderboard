@@ -7,9 +7,7 @@ import 'package:provider/provider.dart';
 import 'package:beerpong_leaderboard/utilities/user.dart';
 import 'package:beerpong_leaderboard/utilities/constants.dart';
 
-
 // TODO have local list of tiles which can be updated seperately from server in case of bad connection
-
 
 class NotificationList extends StatefulWidget {
   const NotificationList({Key? key}) : super(key: key);
@@ -20,7 +18,7 @@ class NotificationList extends StatefulWidget {
 
 class _NotificationListState extends State<NotificationList> {
   // gets a list of the profile urls from usernames
-  Future<Map<String,String>> _getOtherUsersUrls(
+  Future<Map<String, String>> _getOtherUsersUrls(
       List<String> usernames, BuildContext context) async {
     return await context
         .read<DatabaseService>()
@@ -40,10 +38,11 @@ class _NotificationListState extends State<NotificationList> {
       otherUsers.add(v["name"]);
     }
 
-    return FutureBuilder<Map<String,String>>(
+    return FutureBuilder<Map<String, String>>(
       // future in this case is a list of urls from all the users profile pictures
       future: _getOtherUsersUrls(otherUsers, context),
-      builder: (BuildContext context, AsyncSnapshot<Map<String,String>> snapshot) {
+      builder:
+          (BuildContext context, AsyncSnapshot<Map<String, String>> snapshot) {
         // Has data returns the list builder
         if (snapshot.hasData) {
           return ListView.builder(
@@ -51,15 +50,19 @@ class _NotificationListState extends State<NotificationList> {
             itemBuilder: (context, index) {
               return NotificationTile(
                   notification: notifications[notifications.length - index - 1],
-                  url: snapshot.data![notifications[notifications.length - index - 1]['name']]!);
+                  url: snapshot.data![
+                      notifications[notifications.length - index - 1]
+                          ['name']]!);
             },
           );
         } else if (snapshot.hasError) {
           // error returns a container with a loading screen
-          return getLoadingFields(notifications, 60.0, 10.0, MediaQuery.of(context).size.height);
+          return getLoadingFields(
+              notifications, 60.0, 10.0, MediaQuery.of(context).size.height);
         } else {
           // no data returns a container with a loading screen
-          return getLoadingFields(notifications, 60.0, 10.0, MediaQuery.of(context).size.height);
+          return getLoadingFields(
+              notifications, 60.0, 10.0, MediaQuery.of(context).size.height);
         }
       },
     );
@@ -112,7 +115,11 @@ class NotificationTile extends StatelessWidget {
                   children: [
                     TextButton.icon(
                       style: acceptButtonStyle,
-                      onPressed: () {},
+                      onPressed: () {
+                        context
+                            .read<DatabaseService>()
+                            .acceptFriendRequest(notification["name"]);
+                      },
                       icon: const Icon(Icons.add_circle_outline),
                       label: const Text("Accept!!", style: kHintTextStyle),
                     ),
@@ -121,7 +128,9 @@ class NotificationTile extends StatelessWidget {
                     ),
                     TextButton.icon(
                       style: declineButtonStyle,
-                      onPressed: () {},
+                      onPressed: () {
+                        context.read<DatabaseService>().declineFriendRequest(notification["name"]);
+                      },
                       icon: const Icon(Icons.airline_stops),
                       label: const Text("decline", style: kHintTextStyle),
                     )

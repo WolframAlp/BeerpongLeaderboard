@@ -1,6 +1,7 @@
 import 'package:beerpong_leaderboard/utilities/trophy.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:beerpong_leaderboard/utilities/user.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 
 class DatabaseService with ChangeNotifier, DiagnosticableTreeMixin {
@@ -40,6 +41,7 @@ class DatabaseService with ChangeNotifier, DiagnosticableTreeMixin {
       'sendRequests': [],
       'avatarUrl': "",
       'notifications': [],
+      'deviceToken' : await FirebaseMessaging.instance.getToken(),
     }, SetOptions(merge: true));
   }
 
@@ -89,14 +91,12 @@ class DatabaseService with ChangeNotifier, DiagnosticableTreeMixin {
   // send a friend request and add request to own list of send requests
   Future sendFriendRequest(String otherUser) async {
     await userCollection.doc(otherUser).update({
-      "friendRequests": FieldValue.arrayUnion([name])
-    });
-    await userCollection.doc(otherUser).update({
+      "friendRequests": FieldValue.arrayUnion([name]),
       "notifications": FieldValue.arrayUnion([
         {
           "type": "friendRequest",
           "name": name,
-          "time": FieldValue.serverTimestamp()
+          // "time": FieldValue.serverTimestamp()
         }
       ])
     });
@@ -113,27 +113,42 @@ class DatabaseService with ChangeNotifier, DiagnosticableTreeMixin {
 
     // edit other user
     await otherUserDoc.update({
-      "sendRequests": FieldValue.arrayRemove([name])
-    });
-    await otherUserDoc.update({
-      "friends": FieldValue.arrayUnion([name])
-    });
-    await otherUserDoc.update({
+      "sendRequests": FieldValue.arrayRemove([name]),
+      "friends": FieldValue.arrayUnion([name]),
       "notifications": FieldValue.arrayUnion([
         {
           "type": "friendRequestAccepted",
           "name": name,
-          "time": FieldValue.serverTimestamp()
         }
       ])
     });
 
     // edit this user
     await thisUser.update({
-      "friendRequests": FieldValue.arrayRemove([name])
+      "friendRequests": FieldValue.arrayRemove([otherUser]),
+      "friends": FieldValue.arrayUnion([otherUser]),
+      "notifications" : FieldValue.arrayRemove([{"name": otherUser, "type": "friendRequest"}])
     });
+
+    // Edit notifications list
+    return await thisUser.update({"notifications" : FieldValue.arrayUnion([{"name": otherUser, "type": "friendRequestAccepted"}])});
+  }
+
+  // accept a friend request
+  Future declineFriendRequest(String otherUser) async {
+    // make user references
+    DocumentReference otherUserDoc = userCollection.doc(otherUser);
+    DocumentReference thisUser = userCollection.doc(name);
+
+    // edit other user
+    await otherUserDoc.update({
+      "sendRequests": FieldValue.arrayRemove([name]),
+    });
+
+    // edit this user
     return await thisUser.update({
-      "friends": FieldValue.arrayUnion([name])
+      "friendRequests": FieldValue.arrayRemove([otherUser]),
+      "notifications" : FieldValue.arrayRemove([{"name": otherUser, "type": "friendRequest"}])
     });
   }
 

@@ -83,7 +83,7 @@ class _AddFriendListState extends State<AddFriendList> {
   }
 
   void setNewInput(String input) {
-    currentInput = input;
+    currentInput = input.toLowerCase();
   }
 
   // Compare the current content of the input field to all the names and compile a list of names which overlap
@@ -245,7 +245,10 @@ class AddFriendUserTile extends StatelessWidget {
               children: [
                 TextButton.icon(
                   style: acceptButtonStyle,
-                  onPressed: () {},
+                  onPressed: () async {
+                    await context.read<DatabaseService>().sendFriendRequest(username);
+                    context.read<AddFriendTextManager>().resetTiles();
+                  },
                   icon: const Icon(Icons.add_circle_outline),
                   label: const Text("Add!!", style: kHintTextStyle),
                 ),
