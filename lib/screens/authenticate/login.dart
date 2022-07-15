@@ -1,10 +1,12 @@
 import 'package:beerpong_leaderboard/screens/authenticate/register.dart';
 import 'package:beerpong_leaderboard/services/auth.dart';
 import 'package:beerpong_leaderboard/utilities/loading.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:beerpong_leaderboard/utilities/constants.dart';
 import 'package:flutter_signin_button/flutter_signin_button.dart';
+import 'package:provider/provider.dart';
 
 // TODO login with google/facebook
 
@@ -14,7 +16,6 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  final AuthService _auth = AuthService();
   final _formKey = GlobalKey<FormState>();
 
   bool loading = false;
@@ -113,7 +114,7 @@ class _LoginScreenState extends State<LoginScreen> {
           onPressed: () async {
             if (_formKey.currentState!.validate()) {
               setState(() => loading = true);
-              dynamic result = await _auth.signInEmail(email, password);
+              dynamic result = await context.read<AuthService>().signInEmail(email, password);
               if (result == null) {
                 setState(() {
                   error = "Login failed, please check credentials";
@@ -153,7 +154,7 @@ class _LoginScreenState extends State<LoginScreen> {
         text: "Sign in with Google",
         onPressed: () async {
           setState(() => loading = true);
-          dynamic result = await _auth.signInWithGoogle();
+          UserCredential? result = await context.read<AuthService>().signInWithGoogle();
           if (result == null) {
             setState(() {
               error = "Login using Google failed";

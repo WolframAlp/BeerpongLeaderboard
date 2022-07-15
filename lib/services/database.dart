@@ -1,11 +1,13 @@
 import 'package:beerpong_leaderboard/utilities/trophy.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:beerpong_leaderboard/utilities/user.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 
 class DatabaseService with ChangeNotifier, DiagnosticableTreeMixin {
   String? uid;
   String? name;
+  Map<String, String?> collectedUserUrls = {};
   DatabaseService({this.uid, this.name});
 
   // user collection
@@ -19,6 +21,13 @@ class DatabaseService with ChangeNotifier, DiagnosticableTreeMixin {
   final CollectionReference leaderboardCollection =
       FirebaseFirestore.instance.collection('leaderboard');
 
+  // Create all the required database entries for new user
+  Future createAllNewUser() async {
+    createNewUser();
+    createtrophyUser();
+    createrUserOnLeaderboard();
+  }
+
   // Create new user in database
   Future createNewUser() async {
     return await userCollection.doc(name).set({
@@ -28,6 +37,11 @@ class DatabaseService with ChangeNotifier, DiagnosticableTreeMixin {
       'games': 0,
       'elo': 1000,
       'friends': [],
+      'friendRequests': [],
+      'sendRequests': [],
+      'avatarUrl': "",
+      'notifications': [],
+      'deviceToken' : await FirebaseMessaging.instance.getToken(),
     }, SetOptions(merge: true));
   }
 
@@ -74,6 +88,70 @@ class DatabaseService with ChangeNotifier, DiagnosticableTreeMixin {
     });
   }
 
+  // send a friend request and add request to own list of send requests
+  Future sendFriendRequest(String otherUser) async {
+    await userCollection.doc(otherUser).update({
+      "friendRequests": FieldValue.arrayUnion([name]),
+      "notifications": FieldValue.arrayUnion([
+        {
+          "type": "friendRequest",
+          "name": name,
+          // "time": FieldValue.serverTimestamp()
+        }
+      ])
+    });
+    return await userCollection.doc(name).update({
+      "sendRequests": FieldValue.arrayUnion([otherUser])
+    });
+  }
+
+  // accept a friend request
+  Future acceptFriendRequest(String otherUser) async {
+    // make user references
+    DocumentReference otherUserDoc = userCollection.doc(otherUser);
+    DocumentReference thisUser = userCollection.doc(name);
+
+    // edit other user
+    await otherUserDoc.update({
+      "sendRequests": FieldValue.arrayRemove([name]),
+      "friends": FieldValue.arrayUnion([name]),
+      "notifications": FieldValue.arrayUnion([
+        {
+          "type": "friendRequestAccepted",
+          "name": name,
+        }
+      ])
+    });
+
+    // edit this user
+    await thisUser.update({
+      "friendRequests": FieldValue.arrayRemove([otherUser]),
+      "friends": FieldValue.arrayUnion([otherUser]),
+      "notifications" : FieldValue.arrayRemove([{"name": otherUser, "type": "friendRequest"}])
+    });
+
+    // Edit notifications list
+    return await thisUser.update({"notifications" : FieldValue.arrayUnion([{"name": otherUser, "type": "friendRequestAccepted"}])});
+  }
+
+  // accept a friend request
+  Future declineFriendRequest(String otherUser) async {
+    // make user references
+    DocumentReference otherUserDoc = userCollection.doc(otherUser);
+    DocumentReference thisUser = userCollection.doc(name);
+
+    // edit other user
+    await otherUserDoc.update({
+      "sendRequests": FieldValue.arrayRemove([name]),
+    });
+
+    // edit this user
+    return await thisUser.update({
+      "friendRequests": FieldValue.arrayRemove([otherUser]),
+      "notifications" : FieldValue.arrayRemove([{"name": otherUser, "type": "friendRequest"}])
+    });
+  }
+
   // Gets the documents for the top ten players on the leaderboard : https://cloud.google.com/firestore/docs/query-data/order-limit-data
   Future getTopTenPlayers() async {
     return leaderboardCollection
@@ -81,6 +159,51 @@ class DatabaseService with ChangeNotifier, DiagnosticableTreeMixin {
         .limit(10)
         .snapshots()
         .map(_getLeaderboardMapList);
+  }
+
+  // Get a set of user profile urls
+  Future getListOfAvatarUrlsFromNames(List<String> usernames) async {
+    Map<String, String> userUrls = {};
+    List<String> toRemove = [];
+
+    // check if urls are already collected
+    for (var name in usernames) {
+      if (collectedUserUrls.containsKey(name)) {
+        userUrls[name] = collectedUserUrls[name]!;
+        toRemove.add(name);
+      }
+    }
+    
+    // remove all the names of urls already collected
+    for (var name in toRemove) {
+      usernames.remove(name);
+    }
+
+    // check if any are left to download then get them if neccessary
+    if (usernames.isNotEmpty) {
+      Map<String, String> userProfiles = _getUrlFromProfile(await userCollection
+          .where(FieldPath.documentId, whereIn: usernames)
+          .get());
+      for (var name in usernames) {
+        userUrls[name] = userProfiles[name]!;
+        if (!collectedUserUrls.keys.contains(name)) {
+          collectedUserUrls[name] = userProfiles[name];
+        }
+      }
+    }
+
+    // return the map of urls
+    return userUrls;
+  }
+
+  // Get a mapping of names to urls from a snapshot of documents
+  Map<String, String> _getUrlFromProfile(QuerySnapshot snapshot) {
+    List<QueryDocumentSnapshot> documents = snapshot.docs;
+    Map<String, String> userUrls = {};
+    for (var doc in documents) {
+      userUrls[doc.id] = doc.get("avatarUrl");
+    }
+    return userUrls;
   }
 
   // All users list data stream
@@ -100,7 +223,11 @@ class DatabaseService with ChangeNotifier, DiagnosticableTreeMixin {
 
   // Top ten leaderboard stream
   Stream<List<Map>> get topTen {
-    return leaderboardCollection.orderBy("elo").limit(10).snapshots().map(_getLeaderboardMapList);
+    return leaderboardCollection
+        .orderBy("elo", descending: true)
+        .limit(10)
+        .snapshots()
+        .map(_getLeaderboardMapList);
   }
 
   // TODO mapping in the streams could be done automatically from snapshots using the firebase build in costum objects methods : https://firebase.google.com/docs/firestore/manage-data/add-data#custom_objects
@@ -108,6 +235,10 @@ class DatabaseService with ChangeNotifier, DiagnosticableTreeMixin {
   // TODO what happens when offline ??, will information be updated later or never? what if you accept a game, is your elo updated, or do you need to accept it again later?
 
   // TODO for offline users it might be usefull to use the cache option : https://firebase.google.com/docs/firestore/query-data/get-data#source_options
+
+  Future setImageURL(String? imageURL) async {
+    return userCollection.doc(name).update({"avatarUrl": imageURL});
+  }
 
   List<Map> _getLeaderboardMapList(QuerySnapshot snapshot) {
     List<Map> leaderboardMapList = [];
@@ -145,7 +276,19 @@ class DatabaseService with ChangeNotifier, DiagnosticableTreeMixin {
       name: snapshot.get('name'),
       elo: snapshot.get('elo'),
       friends: snapshot.get('friends'),
+      friendRequests: snapshot.get('friendRequests'),
+      sendRequests: snapshot.get('sendRequests'),
+      avatarUrl: snapshot.get('avatarUrl'),
+      notifications: snapshot.get('notifications'),
     );
+  }
+
+  // list of all usernames
+  Future<List<String>> getAllUsernames() async {
+    QuerySnapshot snapshot = await userCollection.get();
+    List<String> names = [];
+    snapshot.docs.forEach((element) {names.add(element.id);});
+    return names;
   }
 
   // user list from snapshot
@@ -158,6 +301,10 @@ class DatabaseService with ChangeNotifier, DiagnosticableTreeMixin {
         name: doc.get('name'),
         elo: doc.get('elo'),
         friends: doc.get('friends'),
+        friendRequests: doc.get('friendRequests'),
+        sendRequests: doc.get('sendRequests'),
+        avatarUrl: doc.get('avatarUrl'),
+        notifications: doc.get('notifications'),
       );
     }).toList();
   }

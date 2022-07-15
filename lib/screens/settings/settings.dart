@@ -1,4 +1,6 @@
+import 'package:beerpong_leaderboard/services/database.dart';
 import 'package:beerpong_leaderboard/services/page_manager.dart';
+import 'package:beerpong_leaderboard/services/storage.dart';
 import 'package:beerpong_leaderboard/utilities/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -29,6 +31,9 @@ class Settings extends StatelessWidget {
           ),
           TextButton.icon(
               onPressed: () async {
+                context.read<DatabaseService>().name = null;
+                context.read<DatabaseService>().uid = null;
+                context.read<StorageService>().name = null;
                 await _auth.signOut();
                 Navigator.pop(context);
               },

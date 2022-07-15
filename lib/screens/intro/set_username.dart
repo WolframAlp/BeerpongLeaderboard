@@ -4,6 +4,8 @@
 
 // TODO make list of just usernames to check against
 
+import 'package:beerpong_leaderboard/services/auth.dart';
+import 'package:beerpong_leaderboard/services/storage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:beerpong_leaderboard/utilities/constants.dart';
@@ -69,6 +71,8 @@ class _SetUsernameState extends State<SetUsername> {
     }
     if (username.length < 6) {
       return "Username too short (min 6 char)";
+    } else if (username.length > 16){
+      return "Username too long (max 16 char)";
     } else if (username.contains('@') ||
         username.contains('%') ||
         username.contains('?')) {
@@ -97,14 +101,14 @@ class _SetUsernameState extends State<SetUsername> {
                 });
               } else {
                 error = '';
+                context.read<DatabaseService>().name = username;
+                context.read<DatabaseService>().uid = user?.uid;
+                context.read<StorageService>().name = username;
+                await context.read<DatabaseService>().createAllNewUser();
+                context.read<PageManager>().currentPage = 6;
+                context.read<AuthService>().firstTimeLogin = false;
                 await user?.updateDisplayName(username);
                 await user?.reload();
-                DatabaseService database = DatabaseService(uid: user?.uid, name: username);
-                await database.createNewUser();
-                await database.createtrophyUser();
-                await database.createrUserOnLeaderboard();
-                loading = false;
-                context.read<PageManager>().goToIntro();
               }
             } else {
               error = '';

@@ -1,4 +1,5 @@
 import 'package:beerpong_leaderboard/services/page_manager.dart';
+import 'package:beerpong_leaderboard/utilities/loading.dart';
 import 'package:flutter/material.dart';
 import 'package:introduction_screen/introduction_screen.dart';
 import 'package:provider/provider.dart';
@@ -87,6 +88,48 @@ const pageDecoration = PageDecoration(
 final introKey = GlobalKey<IntroductionScreenState>();
 
 //*****************************************
+// ButtonStyles
+//*****************************************
+
+// Button style for accept button in notifications
+ButtonStyle acceptButtonStyle = ButtonStyle(
+                              backgroundColor:
+                                  MaterialStateProperty.resolveWith<Color?>(
+                                      (Set<MaterialState> states) {
+                                if (states.contains(MaterialState.pressed)) {
+                                  return Colors.lightGreen[300];
+                                } else {
+                                  return Colors.lightGreen[600];
+                                }
+                              }),
+                              elevation: MaterialStateProperty.resolveWith<double?>((Set<MaterialState> states){
+                                if (states.contains(MaterialState.pressed)){
+                                  return 0.0;
+                                } else {
+                                  return 5.0;
+                                }
+                              }));
+
+// Button style for decline button in notifications
+ButtonStyle declineButtonStyle = ButtonStyle(
+                              backgroundColor:
+                                  MaterialStateProperty.resolveWith<Color?>(
+                                      (Set<MaterialState> states) {
+                                if (states.contains(MaterialState.pressed)) {
+                                  return Color.fromARGB(255, 187, 142, 124);
+                                } else {
+                                  return Color.fromARGB(255, 209, 187, 173);
+                                }
+                              }),
+                              elevation: MaterialStateProperty.resolveWith<double?>((Set<MaterialState> states){
+                                if (states.contains(MaterialState.pressed)){
+                                  return 0.0;
+                                } else {
+                                  return 2.0;
+                                }
+                              }));
+
+//*****************************************
 // Functions
 //*****************************************
 
@@ -128,4 +171,25 @@ void onTappedNavigation(BuildContext context, int newIndex, int currIndex) {
       context.read<PageManager>().goToProfile();
       break;
   }
+}
+
+getLoadingFields(List tiles, double height, double size, double containerHeight) {
+  return SizedBox(
+    height: containerHeight,
+    child: ListView.builder(
+      itemCount: tiles.length,
+      itemBuilder: (context, index) {
+        return Padding(
+            padding: const EdgeInsets.only(top: 8.0),
+            child: Card(
+                margin: const EdgeInsets.fromLTRB(8.0, 4.0, 8.0, 0.0),
+                child: SizedBox(
+                  height: height,
+                  child: LoadingIcon(
+                    size: size,
+                  ),
+                )));
+      },
+    ),
+  );
 }

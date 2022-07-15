@@ -1,9 +1,11 @@
+import 'package:beerpong_leaderboard/services/database.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 
 class AuthService with ChangeNotifier, DiagnosticableTreeMixin {
   final FirebaseAuth _auth = FirebaseAuth.instance;
+  bool firstTimeLogin = false;
 
   FirebaseAuth get _authentication {
     return _auth;
@@ -12,6 +14,14 @@ class AuthService with ChangeNotifier, DiagnosticableTreeMixin {
   // auth change user stream
   Stream<User?> get user {
     return _auth.authStateChanges();
+  }
+
+  Stream<User?> get currentUser {
+    return _auth.userChanges();
+  }
+
+  User? getCurrentUser() {
+    return _auth.currentUser;
   }
 
   // sign in with email
@@ -33,6 +43,7 @@ class AuthService with ChangeNotifier, DiagnosticableTreeMixin {
       UserCredential credential = await _auth.createUserWithEmailAndPassword(
           email: email, password: password);
       User? user = credential.user;
+      firstTimeLogin = true;
       return user;
     } catch (e) {
       print(e.toString());
@@ -50,7 +61,7 @@ class AuthService with ChangeNotifier, DiagnosticableTreeMixin {
     }
   }
 
-  Future<UserCredential> signInWithGoogle() async {
+  Future<UserCredential?> signInWithGoogle() async {
     // Trigger the authentication flow
     final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
 
@@ -64,8 +75,20 @@ class AuthService with ChangeNotifier, DiagnosticableTreeMixin {
       idToken: googleAuth?.idToken,
     );
 
+    if (googleUser == null) {
+      return null;
+    }
+    List<String> possibleSigninMethods =
+        await _auth.fetchSignInMethodsForEmail(googleUser.email);
+    if (possibleSigninMethods.isEmpty) {
+      // DatabaseService database =
+      //     DatabaseService(name: googleUser.displayName, uid: "not needed");
+      // await database.createAllNewUser();
+      firstTimeLogin = true;
+    }
+
     // Once signed in, return the UserCredential
-    return await FirebaseAuth.instance.signInWithCredential(credential);
+    return await _auth.signInWithCredential(credential);
   }
 }
 
