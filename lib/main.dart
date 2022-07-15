@@ -24,7 +24,8 @@ void main() async {
       ChangeNotifierProvider(create: (context) => DatabaseService()),
       ChangeNotifierProvider(create: (context) => StorageService()),
       ChangeNotifierProvider(create: (context) => AuthService()),
-      ChangeNotifierProvider(create: (context) => AddFriendTextManager(),)
+      ChangeNotifierProvider(create: (context) => AddFriendTextManager()),
+      ChangeNotifierProvider(create: (context) => FriendTextManager())
     ], child: const MyApp()),
   );
 }

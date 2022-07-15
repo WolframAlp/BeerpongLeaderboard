@@ -15,3 +15,18 @@ class AddFriendTextManager with ChangeNotifier, DiagnosticableTreeMixin {
   }
 
 }
+
+class FriendTextManager with ChangeNotifier, DiagnosticableTreeMixin {
+  
+  String currentInput = "";
+
+  void setNewInput(String val) {
+    currentInput = val;
+    notifyListeners();
+  }
+  
+  void resetTiles(){
+    notifyListeners();
+  }
+
+}
