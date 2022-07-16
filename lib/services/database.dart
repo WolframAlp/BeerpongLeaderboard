@@ -41,7 +41,7 @@ class DatabaseService with ChangeNotifier, DiagnosticableTreeMixin {
       'sendRequests': [],
       'avatarUrl': "",
       'notifications': [],
-      'deviceToken' : await FirebaseMessaging.instance.getToken(),
+      'deviceToken': await FirebaseMessaging.instance.getToken(),
     }, SetOptions(merge: true));
   }
 
@@ -127,11 +127,17 @@ class DatabaseService with ChangeNotifier, DiagnosticableTreeMixin {
     await thisUser.update({
       "friendRequests": FieldValue.arrayRemove([otherUser]),
       "friends": FieldValue.arrayUnion([otherUser]),
-      "notifications" : FieldValue.arrayRemove([{"name": otherUser, "type": "friendRequest"}])
+      "notifications": FieldValue.arrayRemove([
+        {"name": otherUser, "type": "friendRequest"}
+      ])
     });
 
     // Edit notifications list
-    return await thisUser.update({"notifications" : FieldValue.arrayUnion([{"name": otherUser, "type": "friendRequestAccepted"}])});
+    return await thisUser.update({
+      "notifications": FieldValue.arrayUnion([
+        {"name": otherUser, "type": "friendRequestAccepted"}
+      ])
+    });
   }
 
   // accept a friend request
@@ -148,7 +154,9 @@ class DatabaseService with ChangeNotifier, DiagnosticableTreeMixin {
     // edit this user
     return await thisUser.update({
       "friendRequests": FieldValue.arrayRemove([otherUser]),
-      "notifications" : FieldValue.arrayRemove([{"name": otherUser, "type": "friendRequest"}])
+      "notifications": FieldValue.arrayRemove([
+        {"name": otherUser, "type": "friendRequest"}
+      ])
     });
   }
 
@@ -173,7 +181,7 @@ class DatabaseService with ChangeNotifier, DiagnosticableTreeMixin {
         toRemove.add(name);
       }
     }
-    
+
     // remove all the names of urls already collected
     for (var name in toRemove) {
       usernames.remove(name);
@@ -287,7 +295,9 @@ class DatabaseService with ChangeNotifier, DiagnosticableTreeMixin {
   Future<List<String>> getAllUsernames() async {
     QuerySnapshot snapshot = await userCollection.get();
     List<String> names = [];
-    snapshot.docs.forEach((element) {names.add(element.id);});
+    snapshot.docs.forEach((element) {
+      names.add(element.id);
+    });
     return names;
   }
 
@@ -307,5 +317,33 @@ class DatabaseService with ChangeNotifier, DiagnosticableTreeMixin {
         notifications: doc.get('notifications'),
       );
     }).toList();
+  }
+
+  // Gets a user and returns the usermodel
+  Future<UserModel> getSpecificUser(String name) async {
+    DocumentSnapshot doc = await userCollection.doc(name).get();
+    return UserModel(
+      uid: doc.get('uid'),
+      wins: doc.get('wins'),
+      games: doc.get('games'),
+      name: doc.get('name'),
+      elo: doc.get('elo'),
+      friends: doc.get('friends'),
+      friendRequests: doc.get('friendRequests'),
+      sendRequests: doc.get('sendRequests'),
+      avatarUrl: doc.get('avatarUrl'),
+      notifications: doc.get('notifications'),
+    );
+  }
+
+  // Gets a user's trophies and returns the trophy model
+  Future<TrophyModel> getSpecificUserTrophy(String name) async {
+    DocumentSnapshot doc = await trophysCollection.doc(name).get();
+    return TrophyModel(
+      name: doc.get('name'),
+      trophyNames: doc.get('trophyNames'),
+      trophyTimes: doc.get('trophyTimes'),
+      trophyMap: doc.get('trophyMap'),
+    );
   }
 }
