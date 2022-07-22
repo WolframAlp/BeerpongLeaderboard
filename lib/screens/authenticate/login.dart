@@ -114,7 +114,9 @@ class _LoginScreenState extends State<LoginScreen> {
           onPressed: () async {
             if (_formKey.currentState!.validate()) {
               setState(() => loading = true);
-              dynamic result = await context.read<AuthService>().signInEmail(email, password);
+              dynamic result = await context
+                  .read<AuthService>()
+                  .signInEmail(email, password);
               if (result == null) {
                 setState(() {
                   error = "Login failed, please check credentials";
@@ -152,18 +154,19 @@ class _LoginScreenState extends State<LoginScreen> {
       child: SignInButton(
         Buttons.Google,
         text: "Sign in with Google",
-        onPressed: () async {
-          setState(() => loading = true);
-          UserCredential? result = await context.read<AuthService>().signInWithGoogle();
-          if (result == null) {
-            setState(() {
-              error = "Login using Google failed";
-              loading = false;
-            });
-          } else {
-            error = '';
-          }
-        },
+        onPressed: () {},
+        // onPressed: () async {
+        //   setState(() => loading = true);
+        //   UserCredential? result = await context.read<AuthService>().signInWithGoogle();
+        //   if (result == null) {
+        //     setState(() {
+        //       error = "Login using Google failed";
+        //       loading = false;
+        //     });
+        //   } else {
+        //     error = '';
+        //   }
+        // },
       ),
     );
   }

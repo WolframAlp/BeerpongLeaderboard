@@ -31,7 +31,7 @@ class _TrophyHeadState extends State<TrophyHead> {
                 height: 5.0,
               ),
               const Text(
-                "Awsome Trophes",
+                "Awesome Trophies",
                 style: largeTitleLabelStyle,
               ),
               // TODO make generation by date or order

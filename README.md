@@ -26,3 +26,4 @@ TODO
 -Add a "seen" property to notifications
     -Change color or not appear based on the seen property
 -Rearange information so when downloading users not all their friends and tokens and shit comes along
+-Add match history

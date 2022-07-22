@@ -1,3 +1,4 @@
+import 'package:beerpong_leaderboard/screens/external_profile/external_profile.dart';
 import 'package:beerpong_leaderboard/screens/friendlist/inputTextManager.dart';
 import 'package:beerpong_leaderboard/services/database.dart';
 import 'package:beerpong_leaderboard/services/storage.dart';
@@ -34,7 +35,11 @@ class FriendUserTile extends StatelessWidget {
                               .read<StorageService>()
                               .getImageFromUsername(username, context))
                           .image)
-                    ]),
+                    ],
+                    onTap: () {
+                      Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => ExternalProfile(name: username)));
+                    },),
               ],
             ),
             Column(
