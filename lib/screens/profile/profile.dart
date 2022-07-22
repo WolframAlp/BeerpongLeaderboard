@@ -19,15 +19,18 @@ class Profile extends StatefulWidget {
 class _ProfileState extends State<Profile> {
   @override
   Widget build(BuildContext context) {
-    User? firebaseUser = Provider.of<User?>(context);
+    // User? firebaseUser = Provider.of<User?>(context);
     return WillPopScope(
-      onWillPop: () async {context.read<PageManager>().goBackOneScreen(); return false;},
+      onWillPop: () async {
+        context.read<PageManager>().goBackOneScreen();
+        return false;
+      },
       child: StreamProvider<TrophyModel>.value(
         initialData: context.read<LastTrophyLoad>().lastLoad,
         value: context.read<DatabaseService>().trophys,
         child: StreamProvider<UserModel>.value(
-          value: context.read<DatabaseService>().userData,
           initialData: context.read<LastUserLoad>().lastLoad,
+          value: context.read<DatabaseService>().userData,
           child: Scaffold(
             bottomNavigationBar: getCostumNavigationBar(context, 4),
             backgroundColor: const Color(0xFF6CA8F1),
