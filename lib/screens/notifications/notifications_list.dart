@@ -1,4 +1,5 @@
 import 'package:avatars/avatars.dart';
+import 'package:beerpong_leaderboard/screens/external_profile/external_profile.dart';
 import 'package:beerpong_leaderboard/services/database.dart';
 import 'package:beerpong_leaderboard/services/storage.dart';
 import 'package:beerpong_leaderboard/utilities/loading.dart';
@@ -88,12 +89,23 @@ class NotificationTile extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Avatar(shape: AvatarShape.circle(30.0), useCache: true, sources: [
-              GenericSource((await context
-                      .read<StorageService>()
-                      .getImageFromUsername(notification["name"], context))
-                  .image)
-            ]),
+            Avatar(
+              shape: AvatarShape.circle(30.0),
+              useCache: true,
+              sources: [
+                GenericSource((await context
+                        .read<StorageService>()
+                        .getImageFromUsername(notification["name"], context))
+                    .image)
+              ],
+              onTap: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) =>
+                            ExternalProfile(name: notification["name"])));
+              },
+            ),
             Column(
               children: [
                 const Text(
@@ -129,7 +141,9 @@ class NotificationTile extends StatelessWidget {
                     TextButton.icon(
                       style: declineButtonStyle,
                       onPressed: () {
-                        context.read<DatabaseService>().declineFriendRequest(notification["name"]);
+                        context
+                            .read<DatabaseService>()
+                            .declineFriendRequest(notification["name"]);
                       },
                       icon: const Icon(Icons.airline_stops),
                       label: const Text("decline", style: kHintTextStyle),
@@ -151,12 +165,23 @@ class NotificationTile extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Avatar(shape: AvatarShape.circle(30.0), useCache: true, sources: [
-              GenericSource((await context
-                      .read<StorageService>()
-                      .getImageFromUsername(notification["name"], context))
-                  .image)
-            ]),
+            Avatar(
+              shape: AvatarShape.circle(30.0),
+              useCache: true,
+              sources: [
+                GenericSource((await context
+                        .read<StorageService>()
+                        .getImageFromUsername(notification["name"], context))
+                    .image)
+              ],
+              onTap: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) =>
+                            ExternalProfile(name: notification["name"])));
+              },
+            ),
             Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [

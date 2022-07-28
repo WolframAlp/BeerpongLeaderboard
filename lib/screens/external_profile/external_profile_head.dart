@@ -23,56 +23,57 @@ class _ExternalProfileHeadState extends State<ExternalProfileHead> {
   double iconSize = 32;
   List<Source> pictureSource = [];
 
-  Column getLeftColumn(UserModel user) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Row(
-          children: const [
-            SizedBox(height: 50.0),
-          ],
-        ),
-        const SizedBox(
-          height: 110.0,
-        ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Column(
-              children: [
-                const Text(
-                  "Wins",
-                  style: profileLabelStyle,
-                ),
-                Text(
-                  "${user.wins}",
-                  style: profileValueLabelStyle,
-                ),
-              ],
-            )
-          ],
-        ),
-        const SizedBox(
-          height: 50.0,
-        ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Column(
-              children: [
-                const Text(
-                  "Games",
-                  style: profileLabelStyle,
-                ),
-                Text(
-                  "${user.games}",
-                  style: profileValueLabelStyle,
-                ),
-              ],
-            )
-          ],
-        )
-      ],
+  Widget getLeftColumn(UserModel user) {
+    return Container(
+      height: MediaQuery.of(context).size.height * 0.48,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          SizedBox(
+            height: MediaQuery.of(context).size.height * 0.05,
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Column(
+                children: [
+                  const Text(
+                    "Wins",
+                    style: profileLabelStyle,
+                  ),
+                  Text(
+                    "${user.wins}",
+                    style: profileValueLabelStyle,
+                  ),
+                ],
+              )
+            ],
+          ),
+          SizedBox(
+            height: MediaQuery.of(context).size.height * 0.05,
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Column(
+                children: [
+                  const Text(
+                    "Games",
+                    style: profileLabelStyle,
+                  ),
+                  Text(
+                    "${user.games}",
+                    style: profileValueLabelStyle,
+                  ),
+                ],
+              )
+            ],
+          ),
+          SizedBox(
+            height: MediaQuery.of(context).size.height * 0.05,
+          ),
+        ],
+      ),
     );
   }
 
@@ -118,22 +119,36 @@ class _ExternalProfileHeadState extends State<ExternalProfileHead> {
     );
   }
 
-  Column getCenterColumn(UserModel user, BuildContext context) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.spaceAround,
-      children: [
-        const SizedBox(height: 10.0),
-        _getProfileAvatar(user, context),
-        const SizedBox(height: 45.0),
-        const Text(
-          "Elo",
-          style: profileLabelStyle,
-        ),
-        Text(
-          "${user.elo}",
-          style: profileValueLabelStyle,
-        ),
-      ],
+  Widget getCenterColumn(UserModel user, BuildContext context) {
+    return Container(
+      height: MediaQuery.of(context).size.height * 0.48,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: [
+          SizedBox(
+            height: MediaQuery.of(context).size.height * 0.08,
+          ),
+          _getProfileAvatar(user, context),
+          SizedBox(
+            height: MediaQuery.of(context).size.height * 0.02,
+          ),
+          Text(user.name.toString(), style: profileValueLabelStyle),
+          SizedBox(
+            height: MediaQuery.of(context).size.height * 0.04,
+          ),
+          const Text(
+            "Elo",
+            style: profileLabelStyle,
+          ),
+          Text(
+            "${user.elo}",
+            style: profileValueLabelStyle,
+          ),
+          SizedBox(
+            height: MediaQuery.of(context).size.height * 0.05,
+          ),
+        ],
+      ),
     );
   }
 
@@ -147,57 +162,57 @@ class _ExternalProfileHeadState extends State<ExternalProfileHead> {
 
 // TODO add username to page?
 
-  Column getRightColumn(UserModel user) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: const [
-            SizedBox(height: 50.0),
-          ],
-        ),
-        const SizedBox(
-          height: 110.0,
-        ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Column(
-              children: [
-                const Text(
-                  "Win/Lose",
-                  style: profileLabelStyle,
-                ),
-                Text(
-                  "${getWinLose(user)}",
-                  style: profileValueLabelStyle,
-                ),
-              ],
-            )
-          ],
-        ),
-        const SizedBox(
-          height: 50.0,
-        ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Column(
-              children: [
-                const Text(
-                  "Games",
-                  style: profileLabelStyle,
-                ),
-                Text(
-                  "${user.games}",
-                  style: profileValueLabelStyle,
-                ),
-              ],
-            )
-          ],
-        )
-      ],
+  Widget getRightColumn(UserModel user) {
+    return Container(
+      height: MediaQuery.of(context).size.height * 0.48,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          SizedBox(
+            height: MediaQuery.of(context).size.height * 0.05,
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Column(
+                children: [
+                  const Text(
+                    "Win/Lose",
+                    style: profileLabelStyle,
+                  ),
+                  Text(
+                    "${getWinLose(user)}",
+                    style: profileValueLabelStyle,
+                  ),
+                ],
+              )
+            ],
+          ),
+          SizedBox(
+            height: MediaQuery.of(context).size.height * 0.05,
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Column(
+                children: [
+                  const Text(
+                    "Games",
+                    style: profileLabelStyle,
+                  ),
+                  Text(
+                    "${user.games}",
+                    style: profileValueLabelStyle,
+                  ),
+                ],
+              )
+            ],
+          ),
+          SizedBox(
+            height: MediaQuery.of(context).size.height * 0.05,
+          ),
+        ],
+      ),
     );
   }
 

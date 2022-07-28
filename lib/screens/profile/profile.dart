@@ -34,14 +34,16 @@ class _ProfileState extends State<Profile> {
           child: Scaffold(
             bottomNavigationBar: getCostumNavigationBar(context, 4),
             backgroundColor: const Color(0xFF6CA8F1),
-            body: Column(
-              children: const <Widget>[
-                ProfileHead(),
-                SizedBox(
-                  height: 40.0,
+            body: Container(
+              height: MediaQuery.of(context).size.height * 1.4,
+              child: SingleChildScrollView(
+                child: Column(
+                  children: const <Widget>[
+                    ProfileHead(),
+                    TrophyHead(),
+                  ],
                 ),
-                TrophyHead(),
-              ],
+              ),
             ),
           ),
         ),
