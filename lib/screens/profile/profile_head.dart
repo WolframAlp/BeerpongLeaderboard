@@ -275,8 +275,11 @@ class _ProfileHeadState extends State<ProfileHead> {
     UserModel user = Provider.of<UserModel>(context);
     context.read<LastUserLoad>().setNewModel(user);
     return Padding(
-      padding: EdgeInsets.fromLTRB(0.0, MediaQuery.of(context).padding.top, 0.0,
-          MediaQuery.of(context).size.height * 0.04),
+      padding: EdgeInsets.fromLTRB(
+          0.0,
+          MediaQuery.of(context).padding.top * 1.3,
+          0.0,
+          MediaQuery.of(context).size.height * 0.02),
       child: Row(
         children: [
           Expanded(
