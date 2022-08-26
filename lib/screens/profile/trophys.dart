@@ -17,36 +17,33 @@ class _TrophyHeadState extends State<TrophyHead> {
   Widget build(BuildContext context) {
     final trophys = Provider.of<TrophyModel>(context);
     context.read<LastTrophyLoad>().setNewModel(trophys);
-    return Container(
-      height: 319.0,
-      child: Card(
-        borderOnForeground: true,
-        color: Colors.blueAccent,
-        elevation: 5.0,
-        child: SingleChildScrollView(
-          // physics: ScrollPhysics(),
-          child: Column(
-            children: [
-              const SizedBox(
-                height: 5.0,
-              ),
-              const Text(
-                "Awesome Trophies",
-                style: largeTitleLabelStyle,
-              ),
-              // TODO make generation by date or order
-              ListView.builder(
-                scrollDirection: Axis.vertical,
-                shrinkWrap: true,
-                physics: NeverScrollableScrollPhysics(),
-                itemCount: trophys.trophyMap.length,
-                itemBuilder: (context, index) {
-                  return TrophyTile(trophy: trophys.trophyMap[index]);
-                },
-              ),
-            ],
+    return Card(
+      borderOnForeground: true,
+      color: Colors.blueAccent,
+      elevation: 5.0,
+      child: Column(
+        children: [
+          const SizedBox(
+            height: 5.0,
           ),
-        ),
+          const Text(
+            "Awesome Trophies",
+            style: largeTitleLabelStyle,
+          ),
+          // TODO make generation by date or order
+          SizedBox(
+            height: MediaQuery.of(context).size.height * 0.8,
+            child: ListView.builder(
+              scrollDirection: Axis.vertical,
+              shrinkWrap: true,
+              physics: NeverScrollableScrollPhysics(),
+              itemCount: trophys.trophyMap.length,
+              itemBuilder: (context, index) {
+                return TrophyTile(trophy: trophys.trophyMap[index]);
+              },
+            ),
+          ),
+        ],
       ),
     );
   }

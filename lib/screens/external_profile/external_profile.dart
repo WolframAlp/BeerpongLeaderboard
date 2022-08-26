@@ -27,8 +27,9 @@ class ExternalProfile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color(0xFF6CA8F1),
       appBar: AppBar(
-        backgroundColor: Colors.blue[300],
+        backgroundColor: Colors.blue[320],
         title: Text(
           name,
           style: kHintTextStyle,

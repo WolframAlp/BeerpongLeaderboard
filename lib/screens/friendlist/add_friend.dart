@@ -1,3 +1,4 @@
+import 'package:beerpong_leaderboard/screens/external_profile/external_profile.dart';
 import 'package:beerpong_leaderboard/screens/friendlist/inputTextManager.dart';
 import 'package:beerpong_leaderboard/services/database.dart';
 import 'package:beerpong_leaderboard/services/storage.dart';
@@ -181,14 +182,22 @@ class AddFriendUserTile extends StatelessWidget {
                   width: 10.0,
                 ),
                 Avatar(
-                    shape: AvatarShape.circle(30.0),
-                    useCache: true,
-                    sources: [
-                      GenericSource((await context
-                              .read<StorageService>()
-                              .getImageFromUsername(username, context))
-                          .image)
-                    ]),
+                  shape: AvatarShape.circle(30.0),
+                  useCache: true,
+                  sources: [
+                    GenericSource((await context
+                            .read<StorageService>()
+                            .getImageFromUsername(username, context))
+                        .image)
+                  ],
+                  onTap: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) =>
+                                ExternalProfile(name: username)));
+                  },
+                ),
               ],
             ),
             Column(
@@ -227,14 +236,22 @@ class AddFriendUserTile extends StatelessWidget {
                   width: 10.0,
                 ),
                 Avatar(
-                    shape: AvatarShape.circle(30.0),
-                    useCache: true,
-                    sources: [
-                      GenericSource((await context
-                              .read<StorageService>()
-                              .getImageFromUsername(username, context))
-                          .image)
-                    ]),
+                  shape: AvatarShape.circle(30.0),
+                  useCache: true,
+                  sources: [
+                    GenericSource((await context
+                            .read<StorageService>()
+                            .getImageFromUsername(username, context))
+                        .image)
+                  ],
+                  onTap: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) =>
+                                ExternalProfile(name: username)));
+                  },
+                ),
               ],
             ),
             Text(
@@ -246,7 +263,9 @@ class AddFriendUserTile extends StatelessWidget {
                 TextButton.icon(
                   style: acceptButtonStyle,
                   onPressed: () async {
-                    await context.read<DatabaseService>().sendFriendRequest(username);
+                    await context
+                        .read<DatabaseService>()
+                        .sendFriendRequest(username);
                     context.read<AddFriendTextManager>().resetTiles();
                   },
                   icon: const Icon(Icons.add_circle_outline),

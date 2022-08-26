@@ -1,4 +1,5 @@
 import 'package:avatars/avatars.dart';
+import 'package:beerpong_leaderboard/screens/external_profile/external_profile.dart';
 import 'package:beerpong_leaderboard/services/database.dart';
 import 'package:beerpong_leaderboard/services/storage.dart';
 import 'package:beerpong_leaderboard/utilities/constants.dart';
@@ -72,10 +73,12 @@ class _LeaderboardListState extends State<LeaderboardList> {
                     );
                   } else if (snapshot.hasError) {
                     // error returns a container with a loading screen
-                    return getLoadingFields(leaderboardMap, 60.0, 10.0, MediaQuery.of(context).size.height);
+                    return getLoadingFields(leaderboardMap, 60.0, 10.0,
+                        MediaQuery.of(context).size.height);
                   } else {
                     // no data returns a container with a loading screen
-                    return getLoadingFields(leaderboardMap, 60.0, 10.0, MediaQuery.of(context).size.height);
+                    return getLoadingFields(leaderboardMap, 60.0, 10.0,
+                        MediaQuery.of(context).size.height);
                   }
                 },
               ),
@@ -95,13 +98,22 @@ class LeaderboardTile extends StatelessWidget {
   Future<Widget> _generateLeaderboardTile(
       String name, int elo, BuildContext context) async {
     return ListTile(
-      leading:
-          Avatar(shape: AvatarShape.circle(30.0), useCache: true, sources: [
-        GenericSource((await context
-                .read<StorageService>()
-                .getImageFromUsername(name, context))
-            .image)
-      ]),
+      leading: Avatar(
+        shape: AvatarShape.circle(30.0),
+        useCache: true,
+        sources: [
+          GenericSource((await context
+                  .read<StorageService>()
+                  .getImageFromUsername(name, context))
+              .image)
+        ],
+        onTap: () {
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => ExternalProfile(name: name)));
+        },
+      ),
       title: Text(
         name,
         style: profileLabelStyle,
