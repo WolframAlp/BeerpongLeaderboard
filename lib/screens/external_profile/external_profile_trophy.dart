@@ -1,22 +1,20 @@
 import 'package:beerpong_leaderboard/utilities/constants.dart';
 import 'package:beerpong_leaderboard/utilities/trophy.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
-class TrophyHead extends StatefulWidget {
-  const TrophyHead({Key? key}) : super(key: key);
+class ExternalTrophyHead extends StatefulWidget {
+  final TrophyModel trophy;
+  const ExternalTrophyHead({Key? key, required this.trophy}) : super(key: key);
 
   @override
-  State<TrophyHead> createState() => _TrophyHeadState();
+  State<ExternalTrophyHead> createState() => _ExternalTrophyHeadState();
 }
 
-class _TrophyHeadState extends State<TrophyHead> {
+class _ExternalTrophyHeadState extends State<ExternalTrophyHead> {
   @override
   Widget build(BuildContext context) {
-    final trophys = Provider.of<TrophyModel>(context);
-    context.read<LastTrophyLoad>().setNewModel(trophys);
     return Card(
       borderOnForeground: true,
       color: Colors.blueAccent,
@@ -37,9 +35,9 @@ class _TrophyHeadState extends State<TrophyHead> {
               scrollDirection: Axis.vertical,
               shrinkWrap: true,
               physics: NeverScrollableScrollPhysics(),
-              itemCount: trophys.trophyMap.length,
+              itemCount: widget.trophy.trophyMap.length,
               itemBuilder: (context, index) {
-                return TrophyTile(trophy: trophys.trophyMap[index]);
+                return TrophyTile(trophy: widget.trophy.trophyMap[index]);
               },
             ),
           ),

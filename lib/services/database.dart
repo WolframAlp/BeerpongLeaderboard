@@ -339,11 +339,6 @@ class DatabaseService with ChangeNotifier, DiagnosticableTreeMixin {
   // Gets a user's trophies and returns the trophy model
   Future<TrophyModel> getSpecificUserTrophy(String name) async {
     DocumentSnapshot doc = await trophysCollection.doc(name).get();
-    return TrophyModel(
-      name: doc.get('name'),
-      trophyNames: doc.get('trophyNames'),
-      trophyTimes: doc.get('trophyTimes'),
-      trophyMap: doc.get('trophyMap'),
-    );
+    return _trophysFromSnapshot(doc);
   }
 }

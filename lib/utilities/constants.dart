@@ -40,7 +40,7 @@ const profileValueLabelStyle = TextStyle(
 );
 
 // Label style for large titles
-const  largeTitleLabelStyle = TextStyle(
+const largeTitleLabelStyle = TextStyle(
   color: Colors.orangeAccent,
   fontWeight: FontWeight.bold,
   fontFamily: 'OpenSans',
@@ -92,42 +92,38 @@ final introKey = GlobalKey<IntroductionScreenState>();
 //*****************************************
 
 // Button style for accept button in notifications
-ButtonStyle acceptButtonStyle = ButtonStyle(
-                              backgroundColor:
-                                  MaterialStateProperty.resolveWith<Color?>(
-                                      (Set<MaterialState> states) {
-                                if (states.contains(MaterialState.pressed)) {
-                                  return Colors.lightGreen[300];
-                                } else {
-                                  return Colors.lightGreen[600];
-                                }
-                              }),
-                              elevation: MaterialStateProperty.resolveWith<double?>((Set<MaterialState> states){
-                                if (states.contains(MaterialState.pressed)){
-                                  return 0.0;
-                                } else {
-                                  return 5.0;
-                                }
-                              }));
+ButtonStyle acceptButtonStyle = ButtonStyle(backgroundColor:
+    MaterialStateProperty.resolveWith<Color?>((Set<MaterialState> states) {
+  if (states.contains(MaterialState.pressed)) {
+    return Colors.lightGreen[300];
+  } else {
+    return Colors.lightGreen[600];
+  }
+}), elevation:
+    MaterialStateProperty.resolveWith<double?>((Set<MaterialState> states) {
+  if (states.contains(MaterialState.pressed)) {
+    return 0.0;
+  } else {
+    return 5.0;
+  }
+}));
 
 // Button style for decline button in notifications
-ButtonStyle declineButtonStyle = ButtonStyle(
-                              backgroundColor:
-                                  MaterialStateProperty.resolveWith<Color?>(
-                                      (Set<MaterialState> states) {
-                                if (states.contains(MaterialState.pressed)) {
-                                  return Color.fromARGB(255, 187, 142, 124);
-                                } else {
-                                  return Color.fromARGB(255, 209, 187, 173);
-                                }
-                              }),
-                              elevation: MaterialStateProperty.resolveWith<double?>((Set<MaterialState> states){
-                                if (states.contains(MaterialState.pressed)){
-                                  return 0.0;
-                                } else {
-                                  return 2.0;
-                                }
-                              }));
+ButtonStyle declineButtonStyle = ButtonStyle(backgroundColor:
+    MaterialStateProperty.resolveWith<Color?>((Set<MaterialState> states) {
+  if (states.contains(MaterialState.pressed)) {
+    return Color.fromARGB(255, 187, 142, 124);
+  } else {
+    return Color.fromARGB(255, 209, 187, 173);
+  }
+}), elevation:
+    MaterialStateProperty.resolveWith<double?>((Set<MaterialState> states) {
+  if (states.contains(MaterialState.pressed)) {
+    return 0.0;
+  } else {
+    return 2.0;
+  }
+}));
 
 //*****************************************
 // Functions
@@ -173,7 +169,8 @@ void onTappedNavigation(BuildContext context, int newIndex, int currIndex) {
   }
 }
 
-getLoadingFields(List tiles, double height, double size, double containerHeight) {
+getLoadingFields(
+    List tiles, double height, double size, double containerHeight) {
   return SizedBox(
     height: containerHeight,
     child: ListView.builder(
@@ -193,3 +190,22 @@ getLoadingFields(List tiles, double height, double size, double containerHeight)
     ),
   );
 }
+
+// Trophes
+const double leadingSize = 45.0;
+Map trophyFlavourImage = {
+  "CoolName": const Icon(
+    Icons.cookie_outlined,
+    size: leadingSize,
+  ),
+  "FirstWin": const Icon(Icons.nordic_walking, size: leadingSize),
+  "TenWins": const Icon(Icons.ten_k, size: leadingSize),
+  "Top100": const Icon(Icons.leaderboard, size: leadingSize),
+};
+
+Map trophyFlavourText = {
+  "CoolName": "Cool Name Bro, tell it again! ",
+  "FirstWin": "Letsa goo!",
+  "TenWins": "Just ten more to go",
+  "Top100": "Best of most of all",
+};

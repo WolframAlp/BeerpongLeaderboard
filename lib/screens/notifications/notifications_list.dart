@@ -18,6 +18,8 @@ class NotificationList extends StatefulWidget {
 }
 
 class _NotificationListState extends State<NotificationList> {
+  List notifications = [];
+
   // gets a list of the profile urls from usernames
   Future<Map<String, String>> _getOtherUsersUrls(
       List<String> usernames, BuildContext context) async {
@@ -26,12 +28,14 @@ class _NotificationListState extends State<NotificationList> {
         .getListOfAvatarUrlsFromNames(usernames);
   }
 
+  Future<void> _pullRefresh() async {}
+
   @override
   Widget build(BuildContext context) {
     // Load up user and separate notifications list
     UserModel user = Provider.of<UserModel>(context);
     context.read<LastUserLoad>().setNewModel(user);
-    List notifications = user.notifications;
+    notifications = user.notifications;
 
     // Get list of all the names of people in notifications
     List<String> otherUsers = [];
@@ -39,33 +43,37 @@ class _NotificationListState extends State<NotificationList> {
       otherUsers.add(v["name"]);
     }
 
-    return FutureBuilder<Map<String, String>>(
-      // future in this case is a list of urls from all the users profile pictures
-      future: _getOtherUsersUrls(otherUsers, context),
-      builder:
-          (BuildContext context, AsyncSnapshot<Map<String, String>> snapshot) {
-        // Has data returns the list builder
-        if (snapshot.hasData) {
-          return ListView.builder(
-            itemCount: snapshot.data!.length,
-            itemBuilder: (context, index) {
-              return NotificationTile(
-                  notification: notifications[notifications.length - index - 1],
-                  url: snapshot.data![
-                      notifications[notifications.length - index - 1]
-                          ['name']]!);
-            },
-          );
-        } else if (snapshot.hasError) {
-          // error returns a container with a loading screen
-          return getLoadingFields(
-              notifications, 60.0, 10.0, MediaQuery.of(context).size.height);
-        } else {
-          // no data returns a container with a loading screen
-          return getLoadingFields(
-              notifications, 60.0, 10.0, MediaQuery.of(context).size.height);
-        }
-      },
+    return RefreshIndicator(
+      onRefresh: _pullRefresh,
+      child: FutureBuilder<Map<String, String>>(
+        // future in this case is a list of urls from all the users profile pictures
+        future: _getOtherUsersUrls(otherUsers, context),
+        builder: (BuildContext context,
+            AsyncSnapshot<Map<String, String>> snapshot) {
+          // Has data returns the list builder
+          if (snapshot.hasData) {
+            return ListView.builder(
+              itemCount: snapshot.data!.length,
+              itemBuilder: (context, index) {
+                return NotificationTile(
+                    notification:
+                        notifications[notifications.length - index - 1],
+                    url: snapshot.data![
+                        notifications[notifications.length - index - 1]
+                            ['name']]!);
+              },
+            );
+          } else if (snapshot.hasError) {
+            // error returns a container with a loading screen
+            return getLoadingFields(
+                notifications, 60.0, 10.0, MediaQuery.of(context).size.height);
+          } else {
+            // no data returns a container with a loading screen
+            return getLoadingFields(
+                notifications, 60.0, 10.0, MediaQuery.of(context).size.height);
+          }
+        },
+      ),
     );
   }
 }
