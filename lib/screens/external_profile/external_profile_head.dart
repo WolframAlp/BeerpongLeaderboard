@@ -1,13 +1,7 @@
-import 'dart:io';
-
-import 'package:beerpong_leaderboard/screens/friendlist/friendlist.dart';
-import 'package:beerpong_leaderboard/screens/settings/settings.dart';
-import 'package:beerpong_leaderboard/services/database.dart';
 import 'package:beerpong_leaderboard/services/storage.dart';
 import 'package:beerpong_leaderboard/utilities/user.dart';
 import 'package:beerpong_leaderboard/utilities/constants.dart';
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:avatars/avatars.dart';
 
@@ -24,56 +18,53 @@ class _ExternalProfileHeadState extends State<ExternalProfileHead> {
   List<Source> pictureSource = [];
 
   Widget getLeftColumn(UserModel user) {
-    return Container(
-      height: MediaQuery.of(context).size.height * 0.48,
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          SizedBox(
-            height: MediaQuery.of(context).size.height * 0.05,
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Column(
-                children: [
-                  const Text(
-                    "Wins",
-                    style: profileLabelStyle,
-                  ),
-                  Text(
-                    "${user.wins}",
-                    style: profileValueLabelStyle,
-                  ),
-                ],
-              )
-            ],
-          ),
-          SizedBox(
-            height: MediaQuery.of(context).size.height * 0.05,
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Column(
-                children: [
-                  const Text(
-                    "Games",
-                    style: profileLabelStyle,
-                  ),
-                  Text(
-                    "${user.games}",
-                    style: profileValueLabelStyle,
-                  ),
-                ],
-              )
-            ],
-          ),
-          SizedBox(
-            height: MediaQuery.of(context).size.height * 0.05,
-          ),
-        ],
-      ),
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        SizedBox(
+          height: MediaQuery.of(context).size.height * 0.05,
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Column(
+              children: [
+                const Text(
+                  "Wins",
+                  style: profileLabelStyle,
+                ),
+                Text(
+                  "${user.wins}",
+                  style: profileValueLabelStyle,
+                ),
+              ],
+            )
+          ],
+        ),
+        SizedBox(
+          height: MediaQuery.of(context).size.height * 0.05,
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Column(
+              children: [
+                const Text(
+                  "Games",
+                  style: profileLabelStyle,
+                ),
+                Text(
+                  "${user.games}",
+                  style: profileValueLabelStyle,
+                ),
+              ],
+            )
+          ],
+        ),
+        SizedBox(
+          height: MediaQuery.of(context).size.height * 0.01,
+        ),
+      ],
     );
   }
 
@@ -120,35 +111,32 @@ class _ExternalProfileHeadState extends State<ExternalProfileHead> {
   }
 
   Widget getCenterColumn(UserModel user, BuildContext context) {
-    return Container(
-      height: MediaQuery.of(context).size.height * 0.48,
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: [
-          SizedBox(
-            height: MediaQuery.of(context).size.height * 0.08,
-          ),
-          _getProfileAvatar(user, context),
-          SizedBox(
-            height: MediaQuery.of(context).size.height * 0.02,
-          ),
-          Text(user.name.toString(), style: profileValueLabelStyle),
-          SizedBox(
-            height: MediaQuery.of(context).size.height * 0.04,
-          ),
-          const Text(
-            "Elo",
-            style: profileLabelStyle,
-          ),
-          Text(
-            "${user.elo}",
-            style: profileValueLabelStyle,
-          ),
-          SizedBox(
-            height: MediaQuery.of(context).size.height * 0.05,
-          ),
-        ],
-      ),
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.spaceAround,
+      children: [
+        SizedBox(
+          height: MediaQuery.of(context).size.height * 0.08,
+        ),
+        _getProfileAvatar(user, context),
+        SizedBox(
+          height: MediaQuery.of(context).size.height * 0.02,
+        ),
+        Text(user.name.toString(), style: profileValueLabelStyle),
+        SizedBox(
+          height: MediaQuery.of(context).size.height * 0.04,
+        ),
+        const Text(
+          "Elo",
+          style: profileLabelStyle,
+        ),
+        Text(
+          "${user.elo}",
+          style: profileValueLabelStyle,
+        ),
+        SizedBox(
+          height: MediaQuery.of(context).size.height * 0.05,
+        ),
+      ],
     );
   }
 
@@ -160,59 +148,54 @@ class _ExternalProfileHeadState extends State<ExternalProfileHead> {
     }
   }
 
-// TODO add username to page?
-
   Widget getRightColumn(UserModel user) {
-    return Container(
-      height: MediaQuery.of(context).size.height * 0.48,
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          SizedBox(
-            height: MediaQuery.of(context).size.height * 0.05,
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Column(
-                children: [
-                  const Text(
-                    "Win/Lose",
-                    style: profileLabelStyle,
-                  ),
-                  Text(
-                    "${getWinLose(user)}",
-                    style: profileValueLabelStyle,
-                  ),
-                ],
-              )
-            ],
-          ),
-          SizedBox(
-            height: MediaQuery.of(context).size.height * 0.05,
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Column(
-                children: [
-                  const Text(
-                    "Games",
-                    style: profileLabelStyle,
-                  ),
-                  Text(
-                    "${user.games}",
-                    style: profileValueLabelStyle,
-                  ),
-                ],
-              )
-            ],
-          ),
-          SizedBox(
-            height: MediaQuery.of(context).size.height * 0.05,
-          ),
-        ],
-      ),
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        SizedBox(
+          height: MediaQuery.of(context).size.height * 0.05,
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Column(
+              children: [
+                const Text(
+                  "Win/Lose",
+                  style: profileLabelStyle,
+                ),
+                Text(
+                  "${getWinLose(user)}",
+                  style: profileValueLabelStyle,
+                ),
+              ],
+            )
+          ],
+        ),
+        SizedBox(
+          height: MediaQuery.of(context).size.height * 0.05,
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Column(
+              children: [
+                const Text(
+                  "Games",
+                  style: profileLabelStyle,
+                ),
+                Text(
+                  "${user.games}",
+                  style: profileValueLabelStyle,
+                ),
+              ],
+            )
+          ],
+        ),
+        SizedBox(
+          height: MediaQuery.of(context).size.height * 0.01,
+        ),
+      ],
     );
   }
 
